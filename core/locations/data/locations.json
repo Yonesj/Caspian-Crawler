@@ -1,0 +1,122 @@
+{
+  "provinces": [
+    {
+      "code": "mazandaran",
+      "name_fa": "مازندران",
+      "name_en": "Mazandaran",
+      "aliases": ["استان مازندران", "مازندران"],
+      "cities": [
+        {
+          "code": "sari",
+          "name_fa": "ساری",
+          "name_en": "Sari",
+          "regions": [
+            {"code": "farhang-shahr", "name_fa": "فرهنگشهر", "name_en": "Farhang Shahr"},
+            {"code": "tabarestan", "name_fa": "طبرستان", "name_en": "Tabarestan"},
+            {"code": "qaran", "name_fa": "قارن", "name_en": "Qaran"}
+          ]
+        },
+        {"code": "babol", "name_fa": "بابل", "name_en": "Babol"},
+        {"code": "amol", "name_fa": "آمل", "name_en": "Amol"},
+        {
+          "code": "qaem-shahr",
+          "name_fa": "قائمشهر",
+          "name_en": "Qaem Shahr",
+          "aliases": ["قائم شهر", "قائمشهر"]
+        },
+        {"code": "behshahr", "name_fa": "بهشهر", "name_en": "Behshahr"},
+        {"code": "chalus", "name_fa": "چالوس", "name_en": "Chalus"},
+        {"code": "nowshahr", "name_fa": "نوشهر", "name_en": "Nowshahr"},
+        {"code": "ramsar", "name_fa": "رامسر", "name_en": "Ramsar"},
+        {"code": "tonekabon", "name_fa": "تنکابن", "name_en": "Tonekabon"},
+        {"code": "babolsar", "name_fa": "بابلسر", "name_en": "Babolsar"},
+        {"code": "fereydunkenar", "name_fa": "فریدونکنار", "name_en": "Fereydunkenar"},
+        {"code": "mahmudabad", "name_fa": "محمودآباد", "name_en": "Mahmudabad"},
+        {"code": "nur", "name_fa": "نور", "name_en": "Nur"}
+      ]
+    },
+    {
+      "code": "gilan",
+      "name_fa": "گیلان",
+      "name_en": "Gilan",
+      "aliases": ["استان گیلان", "گیلان"],
+      "cities": [
+        {
+          "code": "rasht",
+          "name_fa": "رشت",
+          "name_en": "Rasht",
+          "regions": [
+            {"code": "golsar", "name_fa": "گلسار", "name_en": "Golsar"},
+            {"code": "moallem", "name_fa": "معلم", "name_en": "Moallem"},
+            {"code": "manzariyeh", "name_fa": "منظریه", "name_en": "Manzariyeh"}
+          ]
+        },
+        {
+          "code": "bandar-anzali",
+          "name_fa": "بندر انزلی",
+          "name_en": "Bandar Anzali",
+          "aliases": ["انزلی", "بندر انزلی", "بندر انزلى"]
+        },
+        {"code": "lahijan", "name_fa": "لاهیجان", "name_en": "Lahijan"},
+        {"code": "langarud", "name_fa": "لنگرود", "name_en": "Langarud"},
+        {
+          "code": "astaneh-ashrafiyeh",
+          "name_fa": "آستانه اشرفیه",
+          "name_en": "Astaneh-ye Ashrafiyeh",
+          "aliases": ["آستانه", "آستانه اشرفیه"]
+        },
+        {
+          "code": "talesh",
+          "name_fa": "تالش",
+          "name_en": "Talesh",
+          "aliases": ["هشتپر", "تالش", "هشتپر تالش"]
+        },
+        {"code": "rudsar", "name_fa": "رودسر", "name_en": "Rudsar"},
+        {"code": "fuman", "name_fa": "فومن", "name_en": "Fuman"},
+        {"code": "astara", "name_fa": "آستارا", "name_en": "Astara"},
+        {"code": "rudbar", "name_fa": "رودبار", "name_en": "Rudbar"}
+      ]
+    },
+    {
+      "code": "golestan",
+      "name_fa": "گلستان",
+      "name_en": "Golestan",
+      "aliases": ["استان گلستان", "گلستان"],
+      "cities": [
+        {
+          "code": "gorgan",
+          "name_fa": "گرگان",
+          "name_en": "Gorgan",
+          "regions": [
+            {"code": "golshahr", "name_fa": "گلشهر", "name_en": "Golshahr"},
+            {"code": "nahar-khoran", "name_fa": "ناهارخوران", "name_en": "Nahar Khoran"},
+            {"code": "vilashahr", "name_fa": "ویلاشهر", "name_en": "Vila Shahr"}
+          ]
+        },
+        {
+          "code": "gonbad-e-kavus",
+          "name_fa": "گنبد کاووس",
+          "name_en": "Gonbad-e Kavus",
+          "aliases": ["گنبدکاووس", "گنبد کاووس", "گنبد"]
+        },
+        {
+          "code": "aliabad-e-katul",
+          "name_fa": "علیآباد کتول",
+          "name_en": "Aliabad-e Katul",
+          "aliases": ["علی آباد", "علیآباد", "علی آباد کتول"]
+        },
+        {
+          "code": "bandar-torkaman",
+          "name_fa": "بندر ترکمن",
+          "name_en": "Bandar Torkaman",
+          "aliases": ["بندرترکمن", "بندر ترکمن"]
+        },
+        {"code": "azadshahr", "name_fa": "آزادشهر", "name_en": "Azadshahr"},
+        {"code": "kordkuy", "name_fa": "کردکوی", "name_en": "Kordkuy"},
+        {"code": "minudasht", "name_fa": "مینودشت", "name_en": "Minudasht"},
+        {"code": "ramian", "name_fa": "رامیان", "name_en": "Ramian"},
+        {"code": "maraveh-tappeh", "name_fa": "مراوه تپه", "name_en": "Maraveh Tappeh"}
+      ]
+    }
+  ]
+}

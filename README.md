@@ -13,7 +13,7 @@ deliberately traded for a sound, well-tested architecture.
 | Milestone | Scope | State |
 | --- | --- | --- |
 | 0 | Foundation: settings, env-driven DB, `accounts`, schema docs, test harness | done |
-| 1 | Domain data: provinces/cities, listings, status history | planned |
+| 1 | Domain data: provinces/cities/regions, listings, status history | done |
 | 2 | Source integrations: Divar + Sheypoor adapters, retry/backoff, rate limits | planned |
 | 3 | Normalization: Persian digits, Toman/Rial, Jalali dates, locations | planned |
 | 4 | Crawl pipeline: jobs, Celery worker + beat, observability | planned |
@@ -41,8 +41,9 @@ cp .env.example .env      # then edit the values
 #    CREATE DATABASE north_estate_db OWNER north_estate_user;
 #    ALTER ROLE north_estate_user CREATEDB;   -- lets pytest-django build its test DB
 
-# 4. Schema and an admin account
+# 4. Schema, reference locations and an admin account
 uv run python manage.py migrate
+uv run python manage.py seed_locations     # idempotent; safe to re-run
 uv run python manage.py createsuperuser
 
 # 5. Run
@@ -101,6 +102,11 @@ never depends on remote sites being reachable or unchanged.
 Tests run against PostgreSQL, so the configured role needs `CREATEDB` to let
 pytest-django create `test_<database>`. Without it, only non-database tests run.
 
+Covered so far: authentication endpoints, schema generation, the location
+hierarchy and its integrity constraints, the `seed_locations` command
+(idempotency, dry-run, malformed input) and the listing model's identity,
+price, ordering and status-history rules.
+
 Parsers are tested against committed fixtures captured from each source; no
 default test performs live requests.
 
@@ -109,13 +115,47 @@ default test performs live requests.
 ```text
 config/settings/     # split settings: base / development / test / production
 core/accounts/       # project user model and JWT endpoints
-core/                # domain apps: locations, listings, crawling, sources, api
+core/locations/      # province/city/region reference data + seed command
+core/listings/       # normalized listing, images, status history
+core/sources/        # shared source vocabulary and (later) crawl adapters
 tests/               # unit, integration and fixture-based parser tests
 ```
 
 Responsibilities stay separated: crawler/source integration, normalization,
 deduplication, job orchestration and API code each live in their own module, and
 neither models nor views contain source-specific parsing logic.
+
+## Domain model
+
+**Locations are data.** `core.locations` holds a three-level hierarchy
+(`Province -> City -> Region`) plus two mapping tables: `SourceLocation`, which
+resolves each source's own place identifier (Divar's numeric place id,
+Sheypoor's slug) onto that hierarchy, and `LocationAlias`, which maps the
+normalised free-text place names found in listing text. Adding a city or a
+source mapping is an insert, never a code change; crawler code contains no city
+list. The hierarchy is deliberately shallow-but-extensible: sources frequently
+publish only a province or only a neighbourhood, and *exactly one* level is
+populated per mapping row (enforced by a database `CHECK` constraint). Regions
+are curated lazily — the packaged seed covers all three provinces and their
+main cities, with neighbourhoods seeded for the largest cities only.
+
+`seed_locations` loads `core/locations/data/locations.json` idempotently
+(create-or-update keyed on the stable `code`), so it is safe to run from a
+deployment entrypoint and re-run after the data file changes. Rows are never
+deleted: listings reference locations with `PROTECT`.
+
+**Listings** (`core.listings`) store the normalized representation only.
+Identity is `(source, source_id)` — the identifier the source itself uses —
+never the URL, because sources rewrite URLs and one listing can be reached
+through several of them. Money is stored in one canonical unit with an explicit
+currency column, and a price that the source does not publish is `NULL` plus
+`is_price_negotiable` where the source says "توافقی", never `0`. Listings keep
+the raw source location text alongside the resolved hierarchy, and the last
+source payload in `raw_data` for diagnostics. Availability is modelled as a
+status column (`active` / `stale` / `delisted` / `hidden`) with an append-only
+`ListingStatusEvent` log, so a listing that vanishes from a crawl is marked, not
+deleted. Cross-source duplicate detection is intentionally *not* part of this
+layer; it arrives in a later milestone.
 
 ## Sources
 

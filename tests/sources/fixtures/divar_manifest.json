@@ -1,15 +1,27 @@
 {
-  "captured_at": "2026-09-17T19:41:15+00:00",
+  "captured_at": "2026-09-17T21:04:49+00:00",
   "source": "divar",
   "scope": "22",
   "files": {
     "divar_list_page1.json": {
       "url": "https://api.divar.ir/v8/postlist/w/search",
-      "listings": 4
+      "listings": 4,
+      "category": null
     },
     "divar_detail_gasGkf8r.json": {
       "url": "https://api.divar.ir/v8/posts-v2/web/gasGkf8r",
-      "listing": "gasGkf8r"
+      "listing": "gasGkf8r",
+      "category": null
+    },
+    "divar_detail_gar-qQRf.json": {
+      "url": "https://api.divar.ir/v8/posts-v2/web/gar-qQRf",
+      "listing": "gar-qQRf",
+      "category": "apartment-sell"
+    },
+    "divar_detail_gas6SGcg.json": {
+      "url": "https://api.divar.ir/v8/posts-v2/web/gas6SGcg",
+      "listing": "gas6SGcg",
+      "category": "apartment-rent"
     }
   }
 }

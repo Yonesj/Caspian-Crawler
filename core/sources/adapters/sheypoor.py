@@ -23,7 +23,7 @@ import re
 from collections.abc import Iterator
 from html import unescape
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 from selectolax.parser import HTMLParser
 
@@ -39,6 +39,7 @@ ROW_START_RE = re.compile(r'([0-9a-f]{1,4}):')
 REF_RE = re.compile(r'^\$([0-9a-f]{1,4})(?:\.(.+))?$')
 LISTING_ID_RE = re.compile(r'-(\d+)\.html$')
 MAX_REF_DEPTH = 8
+PLACE_BREADCRUMB_TYPES = ('province', 'region', 'city', 'neighbourhood', 'district')
 
 
 # -- flight decoding ----------------------------------------------------------
@@ -180,6 +181,45 @@ def format_price(value: Any) -> str | None:
     return None
 
 
+def path_segments(url: str) -> tuple[str, ...]:
+    """Path segments of a site URL, without the leading ``s`` route prefix."""
+    path = urlparse(url or '').path
+    return tuple(segment for segment in path.split('/') if segment and segment != 's')
+
+
+def breadcrumb_refs(breadcrumbs: Any) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Return ``(category_path, place_refs)`` from a page's breadcrumbs.
+
+    Categories keep the order they are published in (general to specific) and
+    places come back most specific first.  A place breadcrumb's slug is its last
+    path segment that is not itself a category segment, because a neighbourhood
+    links to ``/s/<city>/<neighbourhood>/<category>``.
+    """
+    items = [item for item in (breadcrumbs or []) if isinstance(item, dict)]
+
+    categories: list[str] = []
+    for item in items:
+        if item.get('type') != 'category':
+            continue
+        segments = path_segments(item.get('url') or '')
+        if segments and segments[-1] not in categories:
+            categories.append(segments[-1])
+
+    places: list[str] = []
+    for item in reversed(items):
+        if item.get('type') not in PLACE_BREADCRUMB_TYPES:
+            continue
+        segments = tuple(
+            segment
+            for segment in path_segments(item.get('url') or '')
+            if segment not in categories
+        )
+        if segments and segments[-1] not in places:
+            places.append(segments[-1])
+
+    return tuple(categories), tuple(places)
+
+
 def source_id_from_url(url: str) -> str | None:
     match = LISTING_ID_RE.search(url or '')
     return match.group(1) if match else None
@@ -269,6 +309,7 @@ def parse_detail(html: str, source_id: str, url: str) -> ListingDetail:
             image_urls.append(image_url)
 
     breadcrumbs = resolve_refs(row.get('breadcrumbs'), rows) or []
+    category_path, place_refs = breadcrumb_refs(breadcrumbs)
 
     return ListingDetail(
         source=Source.SHEYPOOR,
@@ -281,6 +322,8 @@ def parse_detail(html: str, source_id: str, url: str) -> ListingDetail:
         attributes=attributes,
         image_urls=image_urls,
         published_at_text=row.get('addedAt'),
+        category_path=category_path,
+        place_refs=place_refs,
         raw={
             'category_id': row.get('categoryId'),
             'top_category_id': row.get('topCategoryId'),

@@ -1,0 +1,954 @@
+{
+  "sections": [
+    {
+      "section_name": "BREADCRUMB",
+      "widgets": [
+        {
+          "widget_type": "BREADCRUMB",
+          "data": {
+            "@type": "type.googleapis.com/widgets.BreadcrumbData",
+            "parent_items": [
+              {
+                "title": "املاک",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "real-estate"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              },
+              {
+                "title": "فروش مسکونی",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "residential-sell"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              },
+              {
+                "title": "فروش آپارتمان",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "apartment-sell"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              }
+            ],
+            "current_page_title": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه",
+            "padded": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "TITLE",
+      "widgets": [
+        {
+          "widget_type": "LEGEND_TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.LegendTitleRowData",
+            "title": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه",
+            "high_level_heading": true,
+            "padding": "NO_PADDING"
+          }
+        },
+        {
+          "widget_type": "EXPANDABLE_SECTION",
+          "data": {
+            "@type": "type.googleapis.com/widgets.ExpandableSectionData",
+            "widget_list": [
+              {
+                "widget_type": "DESCRIPTION_ROW",
+                "data": {
+                  "@type": "type.googleapis.com/widgets.DescriptionRowData",
+                  "text": "انتشار آگهی: ۲۶ شهریور ۱۴۰۵، ۱۲:۴۳\nآخرین به‌روز‌رسانی: ۲۶ شهریور ۱۴۰۵، ۱۳:۰۶",
+                  "is_primary": true,
+                  "small": true,
+                  "text_alignment": "RIGHT"
+                }
+              }
+            ],
+            "title": "۱۱ ساعت پیش در ساری، بلوار شهیدان فتح اللهی",
+            "icon": {}
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "زنگ خطرهای قبل از معامله",
+            "action": {
+              "type": "OPEN_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenPagePayload",
+                "request_http_method": "POST",
+                "request_data": {
+                  "@type": "type.googleapis.com/post_api_v2.GetFraudAlertPageRequest.Data",
+                  "category": "apartment-sell"
+                },
+                "specification": {
+                  "@type": "type.googleapis.com/widgets.OpenPagePayload.SimplePageSpecification",
+                  "navigation_button": "BACK"
+                },
+                "is_modal": true,
+                "rest_request_path": "/v8/postview/fraud-alert",
+                "grpc_request_path": "/post_api_v2.PostApi/GetFraudAlertPage"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/warning.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/warning.png",
+              "icon_name": "WARNING",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.PostWarningInfo",
+                "post_token": "gar-qQRf"
+              },
+              "item_type": {
+                "type": "POST_WARNING"
+              }
+            },
+            "enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "DESCRIPTION",
+      "widgets": [
+        {
+          "widget_type": "TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.TitleRowData",
+            "text": "توضیحات",
+            "text_color": "TEXT_PRIMARY",
+            "text_type": "SECONDARY"
+          }
+        },
+        {
+          "widget_type": "DESCRIPTION_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.DescriptionRowData",
+            "text": "۱-کامل باز سازی شده و دارای امتیاز وام مسکن\n۲-سه خواب\n۳-تراس ۲۲ متری که روی سند نیست ، در واقع واحد ۱۵۶ متر میباشد\n۴-طبقه چهارم شرقی",
+            "is_primary": true,
+            "text_alignment": "RIGHT"
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "IMAGE",
+      "widgets": [
+        {
+          "widget_type": "IMAGE_CAROUSEL",
+          "data": {
+            "@type": "type.googleapis.com/widgets.ImageCarouselData",
+            "items": [
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/iIwzI8-hkxkEZD4M6qGeHQ/15526e8a-7cfd-423c-98d8-5e12be16b3fc.webp",
+                  "alt": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه|فروش آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/5K-VVKRxUvKoXra9Eg4Uig/15526e8a-7cfd-423c-98d8-5e12be16b3fc.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/viN0zUWH2th5SqcNzRAsNg/8f2c523c-4175-4ae7-b721-1a2f8b60a322.webp",
+                  "alt": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه|فروش آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/mA-92QrFZTAHJ0kF30Ak_Q/8f2c523c-4175-4ae7-b721-1a2f8b60a322.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/SKX0maALKS85DsIIcYO_Pg/da2dd8de-6d12-4247-9c85-aed3887c1972.webp",
+                  "alt": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه|فروش آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/2_t6NOlrdtbAvgEQcf6LDg/da2dd8de-6d12-4247-9c85-aed3887c1972.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/1eVmzUSHVUcPqt7M6H_RTQ/49aaeddd-537c-4de1-a63d-be3aa095a40c.webp",
+                  "alt": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه|فروش آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/zjPn3ptDShDCFcygRuPdCA/49aaeddd-537c-4de1-a63d-be3aa095a40c.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/vwbde7WGQoDBQ4b1Tw3a0A/52d2aca1-31c2-43fc-b1ee-418132fcdf62.webp",
+                  "alt": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه|فروش آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/spYAKxS6u5pM2TvB3Mlh4Q/52d2aca1-31c2-43fc-b1ee-418132fcdf62.webp"
+                }
+              }
+            ],
+            "image_aspect_ratio": {
+              "dynamic_aspect_ratio": {
+                "height": 3,
+                "width": 4
+              }
+            },
+            "has_preview": true,
+            "has_thumbnails": true,
+            "show_tooltip": true,
+            "tooltip_data": {
+              "icon": {
+                "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/white_primary/v1/fullscreen.png",
+                "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/white_primary/v1/fullscreen.png",
+                "icon_name": "FULLSCREEN",
+                "icon_color": "WHITE_PRIMARY"
+              },
+              "text": "۵"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "LIST_DATA",
+      "widgets": [
+        {
+          "widget_type": "GROUP_INFO_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.GroupInfoRow",
+            "items": [
+              {
+                "title": "متراژ",
+                "value": "۱۳۶"
+              },
+              {
+                "title": "ساخت",
+                "value": "قبل از ۱۳۷۰"
+              },
+              {
+                "title": "اتاق",
+                "value": "۳"
+              }
+            ],
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "تصویر‌ها برای همین ملک است؟",
+            "value": "بله",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "قیمت کل",
+            "value": "‏۶,۹۵۰,۰۰۰,۰۰۰ تومان",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "قیمت هر متر",
+            "value": "‏۵۱,۱۰۲,۰۰۰ تومان",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "طبقه",
+            "value": "۴",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "SECTION_TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SectionTitleRowData",
+            "title": "ویژگی‌ها و امکانات",
+            "title_color": "TEXT_PRIMARY",
+            "padding": "ALT"
+          }
+        },
+        {
+          "widget_type": "GROUP_FEATURE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.GroupFeatureRow",
+            "items": [
+              {
+                "title": "آسانسور ندارد",
+                "icon": {
+                  "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_hint/v1/elevator.png",
+                  "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_hint/v1/elevator.png",
+                  "icon_name": "ELEVATOR",
+                  "icon_color": "ICON_HINT"
+                }
+              },
+              {
+                "title": "پارکینگ",
+                "icon": {
+                  "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/parking.png",
+                  "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/parking.png",
+                  "icon_name": "PARKING",
+                  "icon_color": "ICON_SECONDARY"
+                },
+                "available": true
+              },
+              {
+                "title": "انباری",
+                "icon": {
+                  "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/cabinet.png",
+                  "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/cabinet.png",
+                  "icon_name": "CABINET",
+                  "icon_color": "ICON_SECONDARY"
+                },
+                "available": true
+              }
+            ],
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "سایر ویژگی‌ها و امکانات",
+            "action": {
+              "type": "LOAD_MODAL_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.LoadModalPagePayload",
+                "modal_page": {
+                  "title": "ویژگی‌ها و امکانات",
+                  "widget_list": [
+                    {
+                      "widget_type": "TITLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.TitleRowData",
+                        "text": "ویژگی‌ها",
+                        "has_divider": true,
+                        "text_color": "TEXT_PRIMARY"
+                      }
+                    },
+                    {
+                      "widget_type": "UNEXPANDABLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+                        "title": "جهت ساختمان",
+                        "value": "شرقی",
+                        "has_divider": true
+                      }
+                    },
+                    {
+                      "widget_type": "UNEXPANDABLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+                        "title": "سند",
+                        "value": "تک‌برگ",
+                        "has_divider": true
+                      }
+                    },
+                    {
+                      "widget_type": "UNEXPANDABLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+                        "title": "بازسازی‌ شده",
+                        "value": "هست",
+                        "has_divider": true
+                      }
+                    },
+                    {
+                      "widget_type": "UNEXPANDABLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+                        "title": "وام",
+                        "value": "دارد",
+                        "has_divider": true
+                      }
+                    },
+                    {
+                      "widget_type": "TITLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.TitleRowData",
+                        "text": "امکانات",
+                        "has_divider": true,
+                        "text_color": "TEXT_PRIMARY"
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "آسانسور ندارد",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/elevator.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/elevator.png",
+                          "icon_name": "ELEVATOR",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "پارکینگ",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/parking.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/parking.png",
+                          "icon_name": "PARKING",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "انباری",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/cabinet.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/cabinet.png",
+                          "icon_name": "CABINET",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "بالکن دارد",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/balcony.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/balcony.png",
+                          "icon_name": "BALCONY",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "جنس کف سرامیک",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/texture.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/texture.png",
+                          "icon_name": "TEXTURE",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "سرویس بهداشتی ایرانی",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/wc.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/wc.png",
+                          "icon_name": "WC",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "گرمایش شوفاژ",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/sunny.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/sunny.png",
+                          "icon_name": "SUNNY",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "تأمین‌کننده آب گرم آبگرم‌کن",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/thermometer.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/thermometer.png",
+                          "icon_name": "THERMOMETER",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "has_divider": true,
+            "icon": {},
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z",
+            "fullwidth": true
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.ViewPostFeaturesInfo",
+                "post_token": "gar-qQRf"
+              },
+              "item_type": {
+                "type": "VIEW_POST_FEATURES"
+              }
+            },
+            "enabled": true
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "بررسی و کارشناسی",
+            "action": {
+              "type": "OPEN_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenPagePayload",
+                "request_http_method": "POST",
+                "request_data": {
+                  "@type": "type.googleapis.com/service_providers.GetServiceProvidersPageRequest.RequestData",
+                  "source_v2": "DEMAND_POST",
+                  "filter": {
+                    "service_types": [
+                      "REPORT_INSPECTION"
+                    ],
+                    "city_id": 22,
+                    "category": "apartment-sell",
+                    "post_token": "gar-qQRf",
+                    "touchpoint": "DEMAND_POST"
+                  },
+                  "action_data_builder": {
+                    "conversation_id": "gar-qQRf",
+                    "post_token": "gar-qQRf",
+                    "touchpoint": "DEMAND_POST",
+                    "source": "DEMAND_POST",
+                    "lead_source": "DEMAND"
+                  },
+                  "display_data": {
+                    "page_title": "بررسی و کارشناسی"
+                  },
+                  "trace_id": "20d1cedf-55c3-4245-9556-86c58f1f6a37",
+                  "source": "DEMAND_POST",
+                  "lead_source": "DEMAND"
+                },
+                "specification": {
+                  "@type": "type.googleapis.com/widgets.OpenPagePayload.SimplePageSpecification"
+                },
+                "is_modal": true,
+                "rest_request_path": "/v8/open-platform/service-providers",
+                "grpc_request_path": "/service_providers.ServiceProviders/GetServiceProvidersPage"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/article-magnifier.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/article-magnifier.png",
+              "icon_name": "ARTICLE_MAGNIFIER",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "TAGS",
+      "widgets": [
+        {
+          "widget_type": "WRAPPER_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.WrapperRowData",
+            "chip_list": {
+              "chips": [
+                {
+                  "text": "فروش آپارتمان",
+                  "type": "ACTION",
+                  "action": {
+                    "type": "OPEN_POSTLIST_PAGE_GRPC",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                      "search_data": {
+                        "form_data": {
+                          "data": {
+                            "category": {
+                              "str": {
+                                "value": "apartment-sell"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "source_view": "CATEGORY_BREAD_CRUMB",
+                      "source_view_str": "CATEGORY_BREAD_CRUMB"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "MAP",
+      "widgets": [
+        {
+          "widget_type": "MAP_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.MapRowData",
+            "location": {
+              "exact_data": {
+                "point": {
+                  "latitude": 36.590204022334,
+                  "longitude": 53.065422418957
+                }
+              }
+            },
+            "image_url": "https://mapimage.divarcdn.com/v8/mapimage?encrypted_data=MTIzNDU2Nzg5MTIzXHKdPF_VXK_uQgJbLuJxU_lLncYAyvkBy0AqZ-e9ulBabQ=="
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.MapInfo",
+                "post_token": "gar-qQRf"
+              },
+              "item_type": {
+                "type": "MAP"
+              }
+            },
+            "enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "NOTE",
+      "widgets": [
+        {
+          "widget_type": "NOTE",
+          "data": {
+            "@type": "type.googleapis.com/widgets.NoteData",
+            "title": "یادداشت من",
+            "button_title": "ویرایش یادداشت",
+            "post_token": "gar-qQRf",
+            "icon_button": {
+              "icon": {
+                "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/more_vert.png",
+                "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/more_vert.png",
+                "icon_name": "MORE_VERT",
+                "icon_color": "ICON_SECONDARY"
+              },
+              "action": {
+                "type": "LOAD_MENU",
+                "payload": {
+                  "@type": "type.googleapis.com/widgets.LoadMenuPayload",
+                  "menu": {
+                    "items": [
+                      {
+                        "text": "ویرایش یادداشت",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/edit.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/edit.png",
+                          "icon_name": "EDIT",
+                          "icon_color": "ICON_SECONDARY"
+                        },
+                        "action": {
+                          "type": "NOTE",
+                          "payload": {
+                            "@type": "type.googleapis.com/widgets.NotePayload",
+                            "post_token": "gar-qQRf",
+                            "max_character_count": 256
+                          }
+                        },
+                        "alignment": "RIGHT"
+                      },
+                      {
+                        "text": "حذف یادداشت",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_primary/v1/trash_o.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_primary/v1/trash_o.png",
+                          "icon_name": "TRASH_O",
+                          "icon_color": "ICON_PRIMARY"
+                        },
+                        "action": {
+                          "type": "MAKE_NETWORK_CALL",
+                          "payload": {
+                            "@type": "type.googleapis.com/widgets.MakeNetworkCallPayload",
+                            "grpc_request_path": "/yaad_v2.YaadV2/DeleteNoteV2",
+                            "rest_request_path": "/yaad/delete-note-v2",
+                            "request_data": {
+                              "@type": "type.googleapis.com/yaad_v2.DeleteNoteV2Request.RequestData",
+                              "token": "gar-qQRf"
+                            },
+                            "needs_auth": true
+                          }
+                        },
+                        "alignment": "RIGHT",
+                        "state": "STATE_NEGATIVE"
+                      }
+                    ],
+                    "banner": {}
+                  },
+                  "display_type": "LOAD_MENU_DISPLAY_TYPE_BOTTOM_SHEET"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "STATIC",
+      "widgets": [
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "گزارش آگهی",
+            "action": {
+              "type": "OPEN_FORM_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenFormPagePayload",
+                "grpc_servicer": "/post_quality.PostQualityFeedback/GetFeedbackForm",
+                "request_data": {
+                  "@type": "type.googleapis.com/post_quality.GetFeedbackFormRequest.RequestData",
+                  "post_token": "gar-qQRf"
+                },
+                "rest_request_path": "/v8/post-quality/feedback-form"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/report.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/report.png",
+              "icon_name": "REPORT",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          }
+        }
+      ]
+    }
+  ],
+  "share": {
+    "title": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه",
+    "web_url": "https://divar.ir/v/gar-qQRf"
+  },
+  "seo": {
+    "title": "فروش واحد ۱۳۶ متری و سه خواب در ششصد دستگاه در ساری - ۲۶ شهریور ۱۴۰۵",
+    "description": "آگهی واحد ۱۳۶ متری و سه خواب در ششصد دستگاه در دیوار ساری",
+    "android_package_name": "ir.divar",
+    "android_app_url": "android-app://ir.divar/http/v/واحد ۱۳۶ متری و سه خواب در ششصد دستگاه/gar-qQRf/",
+    "web_info": {
+      "title": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه",
+      "city_persian": "ساری",
+      "category_slug_persian": "فروش آپارتمان"
+    },
+    "unavailable_after": "2026-10-18T12:43:49.439519",
+    "bread_crumb": [
+      {
+        "name": "فروش آپارتمان",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "category": {
+                "str": {
+                  "value": "apartment-sell"
+                }
+              },
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "فروش مسکونی",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "category": {
+                "str": {
+                  "value": "residential-sell"
+                }
+              },
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "املاک",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "category": {
+                "str": {
+                  "value": "real-estate"
+                }
+              },
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "0",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "22",
+        "search_data": {
+          "form_data": {}
+        }
+      },
+      {
+        "name": "دیوار"
+      }
+    ],
+    "post_seo_schema": {
+      "@context": "https://schema.org",
+      "@type": "Apartment",
+      "image": "https://s100.divarcdn.com/static/photo/neda/webp_post/iIwzI8-hkxkEZD4M6qGeHQ/15526e8a-7cfd-423c-98d8-5e12be16b3fc.webp",
+      "description": "۱-کامل باز سازی شده و دارای امتیاز وام مسکن\n۲-سه خواب\n۳-تراس ۲۲ متری که روی سند نیست ، در واقع واحد ۱۵۶ متر میباشد\n۴-طبقه چهارم شرقی",
+      "accommodationCategory": "فروش آپارتمان",
+      "geo": {
+        "latitude": "36.590204022334",
+        "longitude": "53.065422418957",
+        "@type": "GeoCoordinates",
+        "address": "ساری"
+      },
+      "url": "https://divar.ir/v/واحد-۱۳۶-متری-و-سه-خواب-در-ششصد-دستگاه/gar-qQRf",
+      "web_info": {
+        "title": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه",
+        "city_persian": "ساری",
+        "district_persian": "",
+        "category_slug_persian": "فروش آپارتمان"
+      },
+      "numberOfRooms": "سه",
+      "floorSize": {
+        "@type": "QuantitativeValue",
+        "value": "136",
+        "unitCode": "MTK"
+      },
+      "name": "واحد ۱۳۶ متری و سه خواب در ششصد دستگاه"
+    },
+    "image_url": "https://s100.divarcdn.com/static/photo/neda/post/wt1Rzfd9DNj50U3FYr9dKw/15526e8a-7cfd-423c-98d8-5e12be16b3fc.jpg"
+  },
+  "contact": {
+    "chat_enabled": true,
+    "action_log": {
+      "server_side_info": {
+        "info": {
+          "@type": "type.googleapis.com/action_log.ContactInfoInfo",
+          "post_token": "gar-qQRf",
+          "method_name": "GetContactWeb",
+          "contact_uuid": "44c094bb-b4c5-4f64-a471-5b4bcae12588"
+        },
+        "item_type": {
+          "type": "CONTACT_INFO"
+        }
+      },
+      "enabled": true
+    },
+    "contact_uuid": "44c094bb-b4c5-4f64-a471-5b4bcae12588"
+  },
+  "city": {
+    "city_id": "22",
+    "name": "ساری",
+    "parent_id": "893",
+    "second_slug": "sari"
+  }
+}

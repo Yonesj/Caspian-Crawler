@@ -5,7 +5,14 @@ import pytest
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
-from core.locations.models import City, LocationAlias, Province, Region
+from core.locations.models import (
+    City,
+    LocationAlias,
+    Province,
+    Region,
+    SourceLocation,
+)
+from core.sources.enums import Source
 
 pytestmark = pytest.mark.integration
 
@@ -57,6 +64,7 @@ def test_seed_is_idempotent(db):
         City.objects.count(),
         Region.objects.count(),
         LocationAlias.objects.count(),
+        SourceLocation.objects.count(),
     )
 
     seed()
@@ -66,6 +74,7 @@ def test_seed_is_idempotent(db):
         City.objects.count(),
         Region.objects.count(),
         LocationAlias.objects.count(),
+        SourceLocation.objects.count(),
     )
 
 
@@ -98,3 +107,97 @@ def test_seed_rejects_a_file_without_provinces(db, tmp_path):
 def test_seed_reports_a_missing_file(db, tmp_path):
     with pytest.raises(CommandError):
         seed('--path', str(tmp_path / 'nope.json'))
+
+
+def test_seed_maps_each_source_id_onto_its_own_level(db):
+    seed()
+
+    assert SourceLocation.objects.get(
+        source=Source.DIVAR, external_id='22'
+    ).city == City.objects.get(code='sari')
+    assert SourceLocation.objects.get(
+        source=Source.SHEYPOOR, external_id='mazandaran'
+    ).province == Province.objects.get(code='mazandaran')
+    assert SourceLocation.objects.get(
+        source=Source.SHEYPOOR, external_id='band-e-pey'
+    ).region == Region.objects.get(code='band-e-pey')
+
+
+def test_seed_reports_source_location_counts(db):
+    assert 'source_locations=' in seed('--dry-run')
+
+
+def _write(tmp_path, province_extra):
+    path = tmp_path / 'locations.json'
+    province = {
+        'code': 'mazandaran',
+        'name_fa': 'مازندران',
+        'name_en': 'Mazandaran',
+        'cities': [],
+        **province_extra,
+    }
+    path.write_text(json.dumps({'provinces': [province]}), encoding='utf-8')
+    return str(path)
+
+
+def test_seed_rejects_an_unknown_source_name(db, tmp_path):
+    path = _write(tmp_path, {'source_ids': {'kijiji': '1'}})
+
+    with pytest.raises(CommandError, match='unknown source'):
+        seed('--path', path)
+
+
+def test_seed_rejects_an_empty_source_id(db, tmp_path):
+    path = _write(tmp_path, {'source_ids': {'divar': '  '}})
+
+    with pytest.raises(CommandError, match='must not be empty'):
+        seed('--path', path)
+
+
+def test_seed_rejects_a_source_id_used_twice(db, tmp_path):
+    path = _write(
+        tmp_path,
+        {
+            'source_ids': {'divar': '22'},
+            'cities': [
+                {'code': 'sari', 'name_fa': 'ساری', 'name_en': 'Sari', 'source_ids': {'divar': '22'}}
+            ],
+        },
+    )
+
+    with pytest.raises(CommandError, match='already used'):
+        seed('--path', path)
+
+
+def test_seed_moves_a_mapping_instead_of_duplicating_it(db, tmp_path):
+    seed('--path', _write(tmp_path, {'source_ids': {'divar': '22'}}))
+    assert SourceLocation.objects.get(source='divar', external_id='22').province is not None
+
+    moved = tmp_path / 'moved.json'
+    moved.write_text(
+        json.dumps(
+            {
+                'provinces': [
+                    {
+                        'code': 'mazandaran',
+                        'name_fa': 'مازندران',
+                        'name_en': 'Mazandaran',
+                        'cities': [
+                            {
+                                'code': 'sari',
+                                'name_fa': 'ساری',
+                                'name_en': 'Sari',
+                                'source_ids': {'divar': '22'},
+                            }
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding='utf-8',
+    )
+    seed('--path', str(moved))
+
+    mappings = SourceLocation.objects.filter(source='divar', external_id='22')
+    assert mappings.count() == 1
+    assert mappings.get().city.code == 'sari'

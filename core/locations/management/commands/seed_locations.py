@@ -1,9 +1,14 @@
 """Load the curated province/city/region reference data.
 
-The command is idempotent: re-running it updates names and aliases in place and
-never duplicates rows, so it is safe to call from a deployment entrypoint.
-Rows are never deleted, because listings reference them (``PROTECT``) and
-removing a city would either fail or silently orphan history.
+The command is idempotent: re-running it updates names, aliases and source
+identifiers in place and never duplicates rows, so it is safe to call from a
+deployment entrypoint.  Rows are never deleted, because listings reference them
+(``PROTECT``) and removing a city would either fail or silently orphan history.
+
+Each level may carry ``source_ids`` -- the identifiers the sources themselves
+use for that place (Divar's numeric city id, Sheypoor's slug) -- which become
+``SourceLocation`` rows.  That is what lets crawler code resolve a place without
+containing a city list.
 """
 
 import json
@@ -12,11 +17,18 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from core.locations.models import City, LocationAlias, Province, Region
+from core.locations.models import (
+    City,
+    LocationAlias,
+    Province,
+    Region,
+    SourceLocation,
+)
+from core.sources.enums import Source
 
 DEFAULT_DATA_PATH = Path(__file__).resolve().parents[2] / 'data' / 'locations.json'
 
-LEVELS = ('provinces', 'cities', 'regions', 'aliases')
+LEVELS = ('provinces', 'cities', 'regions', 'aliases', 'source_locations')
 
 
 class Command(BaseCommand):
@@ -69,6 +81,7 @@ class Command(BaseCommand):
         if not isinstance(provinces, list) or not provinces:
             raise CommandError('Locations file must contain a non-empty "provinces" list.')
 
+        seen_source_ids: set[tuple[str, str]] = set()
         seen_province_codes = set()
         for province in provinces:
             code = province.get('code')
@@ -77,6 +90,7 @@ class Command(BaseCommand):
             if code in seen_province_codes:
                 raise CommandError(f'Duplicate province code in file: {code}')
             seen_province_codes.add(code)
+            self._check_source_ids(province, f'Province {code}', seen_source_ids)
 
             seen_city_codes = set()
             for city in province.get('cities', []):
@@ -86,6 +100,7 @@ class Command(BaseCommand):
                 if city_code in seen_city_codes:
                     raise CommandError(f'Province {code}: duplicate city code {city_code}')
                 seen_city_codes.add(city_code)
+                self._check_source_ids(city, f'City {city_code}', seen_source_ids)
 
                 seen_region_codes = set()
                 for region in city.get('regions', []):
@@ -99,8 +114,27 @@ class Command(BaseCommand):
                             f'City {city_code}: duplicate region code {region_code}'
                         )
                     seen_region_codes.add(region_code)
+                    self._check_source_ids(
+                        region, f'Region {region_code}', seen_source_ids
+                    )
 
         return provinces
+
+    def _check_source_ids(self, node, label, seen):
+        source_ids = node.get('source_ids') or {}
+        if not isinstance(source_ids, dict):
+            raise CommandError(f'{label}: "source_ids" must be an object.')
+        for source, external_id in source_ids.items():
+            if str(source) not in Source.values:
+                raise CommandError(f'{label}: unknown source {source!r} in "source_ids".')
+            if not str(external_id).strip():
+                raise CommandError(f'{label}: "source_ids" for {source} must not be empty.')
+            key = (str(source), str(external_id))
+            if key in seen:
+                raise CommandError(
+                    f'{label}: {source} id {external_id!r} is already used by another place.'
+                )
+            seen.add(key)
 
     # -- upserts --------------------------------------------------------------
     def _track(self, level, created):
@@ -114,6 +148,7 @@ class Command(BaseCommand):
         )
         self._track('provinces', created)
         self._upsert_aliases(data.get('aliases'), province=province)
+        self._upsert_source_ids(data.get('source_ids'), province=province)
 
         for city_data in data.get('cities', []):
             city, created = City.objects.update_or_create(
@@ -126,6 +161,7 @@ class Command(BaseCommand):
             )
             self._track('cities', created)
             self._upsert_aliases(city_data.get('aliases'), city=city)
+            self._upsert_source_ids(city_data.get('source_ids'), city=city)
 
             for region_data in city_data.get('regions', []):
                 region, created = Region.objects.update_or_create(
@@ -138,6 +174,21 @@ class Command(BaseCommand):
                 )
                 self._track('regions', created)
                 self._upsert_aliases(region_data.get('aliases'), region=region)
+                self._upsert_source_ids(region_data.get('source_ids'), region=region)
+
+    def _upsert_source_ids(self, source_ids, **target):
+        if not source_ids:
+            return
+        # Clear the other levels: a place may have moved up or down the
+        # hierarchy since the last run, and a mapping points at exactly one.
+        defaults = {'province': None, 'city': None, 'region': None, **target}
+        for source, external_id in source_ids.items():
+            _, created = SourceLocation.objects.update_or_create(
+                source=str(source),
+                external_id=str(external_id),
+                defaults=defaults,
+            )
+            self._track('source_locations', created)
 
     def _upsert_aliases(self, aliases, **target):
         if not aliases:

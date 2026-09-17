@@ -11,7 +11,12 @@ from django.test import override_settings
 from core.sources.adapters import divar, sheypoor
 from core.sources.dto import CrawlScope
 from core.sources.enums import Source
-from tests.sources.conftest import first_fixture, fixture_text, make_policy
+from tests.sources.conftest import (
+    DIVAR_COMMERCIAL_RENT,
+    SHEYPOOR_LAND_SALE,
+    fixture_text,
+    make_policy,
+)
 
 # Pacing is asserted in the rate-limit tests; here it would only slow the suite.
 NO_PACING = override_settings(
@@ -36,7 +41,7 @@ def run_capture(**options):
 @NO_PACING
 def test_divar_capture_trims_and_verifies(tmp_path):
     raw_fixture = fixture_text('divar_list_page1.json')
-    detail_fixture = first_fixture('divar_detail_*.json').read_text(encoding='utf-8')
+    detail_fixture = fixture_text(DIVAR_COMMERCIAL_RENT)
     respx.post(divar.LIST_URL).mock(return_value=httpx.Response(200, text=raw_fixture))
     respx.get(url__startswith='https://api.divar.ir/v8/posts-v2/web/').mock(
         return_value=httpx.Response(200, text=detail_fixture)
@@ -73,7 +78,7 @@ def test_divar_capture_trims_and_verifies(tmp_path):
 @NO_PACING
 def test_sheypoor_capture_trims_and_verifies(tmp_path):
     list_html = fixture_text('sheypoor_list_page1.html')
-    detail_html = first_fixture('sheypoor_detail_*.html').read_text(encoding='utf-8')
+    detail_html = fixture_text(SHEYPOOR_LAND_SALE)
     respx.get(url__startswith='https://www.sheypoor.com/s/').mock(
         return_value=httpx.Response(200, text=list_html)
     )
@@ -109,7 +114,7 @@ def test_capture_is_repeatable(tmp_path):
     )
     respx.get(url__startswith='https://api.divar.ir/v8/posts-v2/web/').mock(
         return_value=httpx.Response(
-            200, text=first_fixture('divar_detail_*.json').read_text(encoding='utf-8')
+            200, text=fixture_text(DIVAR_COMMERCIAL_RENT)
         )
     )
     out_dir = tmp_path / 'fixtures'

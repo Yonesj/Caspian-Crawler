@@ -11,8 +11,10 @@ from core.sources.enums import Source
 from core.sources.errors import ParseError
 from core.sources.transport import HttpxFetcher
 from tests.sources.conftest import (
+    DIVAR_APARTMENT_RENT,
+    DIVAR_APARTMENT_SALE,
+    DIVAR_COMMERCIAL_RENT,
     RecordingLimiter,
-    first_fixture,
     fixture_json,
     fixture_text,
 )
@@ -104,7 +106,7 @@ def test_page_limit_stops_early(adapter):
 
 @respx.mock
 def test_detail_page_is_parsed(adapter):
-    detail = fixture_json(first_fixture('divar_detail_*.json').name)
+    detail = fixture_json(DIVAR_COMMERCIAL_RENT)
 
     parsed = divar.parse_detail(detail, 'gasGkf8r')
 
@@ -122,7 +124,7 @@ def test_detail_page_is_parsed(adapter):
 def test_fetch_detail_requests_the_token_endpoint(adapter):
     route = respx.get(divar.DETAIL_URL.format(token='gasGkf8r')).mock(
         return_value=httpx.Response(
-            200, text=first_fixture('divar_detail_*.json').read_text(encoding='utf-8')
+            200, text=fixture_text(DIVAR_COMMERCIAL_RENT)
         )
     )
 
@@ -135,7 +137,7 @@ def test_fetch_detail_requests_the_token_endpoint(adapter):
 
 @respx.mock
 def test_detail_preserves_the_not_available_after_signal(adapter):
-    detail = fixture_json(first_fixture('divar_detail_*.json').name)
+    detail = fixture_json(DIVAR_COMMERCIAL_RENT)
 
     parsed = divar.parse_detail(detail, 'gasGkf8r')
 
@@ -168,3 +170,63 @@ def test_iter_listings_flattens_pages(adapter):
     stubs = list(adapter.iter_listings(CrawlScope(SCOPE.external_id, page_limit=1)))
 
     assert len(stubs) == 4
+
+
+def test_detail_surfaces_the_source_category_and_place():
+    detail = divar.parse_detail(fixture_json(DIVAR_APARTMENT_SALE), 'gar-qQRf')
+
+    # General to specific, exactly as the site's own breadcrumbs nest them.
+    assert detail.category_path == (
+        'real-estate',
+        'residential-sell',
+        'apartment-sell',
+    )
+    assert detail.place_refs == ('22', 'sari')
+
+
+def test_a_rent_detail_carries_its_own_category():
+    detail = divar.parse_detail(fixture_json(DIVAR_APARTMENT_RENT), 'gas6SGcg')
+
+    assert detail.category_path[-1] == 'apartment-rent'
+
+
+def test_category_path_falls_back_to_the_schema_when_breadcrumbs_are_missing():
+    payload = {'seo': {'post_seo_schema': {'category': 'shop-rent'}}}
+
+    assert divar.category_path_from(payload['seo']) == ('shop-rent',)
+    assert divar.category_path_from({}) == ()
+
+
+def test_a_category_scope_is_sent_the_way_the_site_itself_does():
+    unscoped = divar.list_body(CrawlScope('22'))
+    scoped = divar.list_body(CrawlScope('22', category='apartment-sell'))
+
+    assert 'search_data' not in unscoped
+    assert scoped['search_data']['form_data']['data']['category']['str']['value'] == (
+        'apartment-sell'
+    )
+    # Pagination and the category filter coexist: the filter is not dropped
+    # when a follow-up page is requested.
+    paged = divar.list_body(CrawlScope('22', category='apartment-sell'), {'page': 2})
+    assert paged['pagination_data'] == {'page': 2}
+    assert 'category' in paged['search_data']['form_data']['data']
+
+
+@respx.mock
+def test_the_list_request_carries_the_category(adapter):
+    route = respx.post(divar.LIST_URL).mock(
+        return_value=httpx.Response(
+            200, text=fixture_text('divar_list_page1.json')
+        )
+    )
+
+    list(
+        adapter.iter_list_pages(
+            CrawlScope('22', category='apartment-sell', page_limit=1)
+        )
+    )
+
+    sent = json.loads(route.calls[0].request.content)
+    assert sent['search_data']['form_data']['data']['category']['str']['value'] == (
+        'apartment-sell'
+    )

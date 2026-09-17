@@ -9,6 +9,13 @@ from core.sources.config import SourcePolicy
 
 FIXTURES = Path(__file__).parent / 'fixtures'
 
+# Pinned on purpose: the detail fixture the parser tests describe, so adding a
+# new capture cannot silently change which payload they exercise.
+DIVAR_COMMERCIAL_RENT = 'divar_detail_gasGkf8r.json'
+DIVAR_APARTMENT_SALE = 'divar_detail_gar-qQRf.json'
+DIVAR_APARTMENT_RENT = 'divar_detail_gas6SGcg.json'
+SHEYPOOR_LAND_SALE = 'sheypoor_detail_464398666.html'
+
 
 def fixture_text(name):
     return (FIXTURES / name).read_text(encoding='utf-8')

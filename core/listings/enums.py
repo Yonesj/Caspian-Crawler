@@ -11,6 +11,10 @@ from django.db import models
 class TransactionType(models.TextChoices):
     SALE = "sale", "Sale / purchase"
     RENT = "rent", "Rent"
+    # Sources return categories that say nothing about sale vs rent (Sheypoor's
+    # bare "land"), and city-wide crawls return listings that are not property
+    # at all.  "Unspecified" records that honestly instead of guessing "sale".
+    UNSPECIFIED = "unspecified", "Not stated by the source"
 
 
 class PropertyType(models.TextChoices):

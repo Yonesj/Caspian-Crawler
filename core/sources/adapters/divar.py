@@ -32,6 +32,62 @@ IMAGE_WIDGET = 'IMAGE_CAROUSEL'
 ATTRIBUTE_WIDGETS = ('GROUP_INFO_ROW', 'LIST_DATA_ROW', 'UNEXPANDABLE_ROW')
 
 
+def list_body(scope: CrawlScope, pagination_data: dict | None = None) -> dict[str, Any]:
+    """Build the search request body for one page of a scope.
+
+    The category filter belongs under ``search_data.form_data`` — the shape the
+    site's own breadcrumbs use.  A ``filters.data.category`` body is accepted
+    with HTTP 200 but ignored, so it would silently crawl every category.
+    """
+    body: dict[str, Any] = {'city_ids': [str(scope.external_id)]}
+    if scope.category:
+        body['search_data'] = {
+            'form_data': {'data': {'category': {'str': {'value': scope.category}}}}
+        }
+    if pagination_data is not None:
+        body['pagination_data'] = pagination_data
+    return body
+
+
+def category_path_from(seo: Any) -> tuple[str, ...]:
+    """The listing's category slugs, ordered general to specific.
+
+    Every breadcrumb carries the machine-readable slug its own search UI uses
+    (``shop-rent``, ``apartment-sell``); the schema.org ``category`` field is
+    only populated for some post types, so it is the fallback rather than the
+    source of truth.
+    """
+    if not isinstance(seo, dict):
+        return ()
+    slugs: list[str] = []
+    for crumb in seo.get('bread_crumb') or []:
+        if not isinstance(crumb, dict):
+            continue
+        form_data = (crumb.get('search_data') or {}).get('form_data') or {}
+        data = form_data.get('data') or {}
+        value = ((data.get('category') or {}).get('str') or {}).get('value')
+        if isinstance(value, str) and value and value not in slugs:
+            slugs.append(value)
+    if slugs:
+        return tuple(reversed(slugs))
+    schema = seo.get('post_seo_schema') or {}
+    category = schema.get('category')
+    return (category,) if isinstance(category, str) and category else ()
+
+
+def place_refs_from(payload: Any) -> tuple[str, ...]:
+    """The source's own place identifiers for the listing, specific first."""
+    city = (payload or {}).get('city') if isinstance(payload, dict) else None
+    if not isinstance(city, dict):
+        return ()
+    refs = []
+    for key in ('city_id', 'second_slug'):
+        value = city.get(key)
+        if isinstance(value, str) and value and value not in refs:
+            refs.append(value)
+    return tuple(refs)
+
+
 def iter_widgets(sections: Any) -> Iterator[dict]:
     """Yield every widget, descending into expandable sections."""
     if not isinstance(sections, list):
@@ -157,6 +213,8 @@ def parse_detail(payload: Any, source_id: str) -> ListingDetail:
         attributes=attributes,
         image_urls=image_urls,
         published_at_text=published_at_text,
+        category_path=category_path_from(seo),
+        place_refs=place_refs_from(payload),
         raw={
             'seo': seo,
             'dates_text': date_block,
@@ -169,7 +227,7 @@ class DivarAdapter(SourceAdapter):
     source = Source.DIVAR
 
     def iter_list_pages(self, scope: CrawlScope) -> Iterator[ListPage]:
-        body: dict[str, Any] = {'city_ids': [str(scope.external_id)]}
+        body = list_body(scope)
         page = 1
         while True:
             response = self.fetcher.fetch(
@@ -187,7 +245,7 @@ class DivarAdapter(SourceAdapter):
                 return
             if scope.page_limit is not None and page >= scope.page_limit:
                 return
-            body = {**body, 'pagination_data': list_page.raw['pagination_data']}
+            body = list_body(scope, list_page.raw['pagination_data'])
             page += 1
 
     def fetch_detail(self, source_id: str, *, url: str | None = None) -> ListingDetail:

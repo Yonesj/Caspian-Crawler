@@ -9,8 +9,8 @@ from core.sources.enums import Source
 from core.sources.errors import ParseError, SourceError
 from core.sources.transport import HttpxFetcher
 from tests.sources.conftest import (
+    SHEYPOOR_LAND_SALE,
     RecordingLimiter,
-    first_fixture,
     fixture_text,
 )
 
@@ -121,7 +121,7 @@ def test_repeated_page_stops_the_loop(adapter):
 
 @pytest.fixture
 def detail_html():
-    return first_fixture('sheypoor_detail_*.html').read_text(encoding='utf-8')
+    return fixture_text(SHEYPOOR_LAND_SALE)
 
 
 def test_detail_page_is_parsed(detail_html):
@@ -220,3 +220,32 @@ def test_price_and_image_helpers():
 )
 def test_source_id_from_url(url, expected):
     assert sheypoor.source_id_from_url(url) == expected
+
+
+def test_detail_surfaces_the_source_category_and_place(detail_html):
+    parsed = sheypoor.parse_detail(detail_html, '464398666', 'https://x/464398666.html')
+
+    assert parsed.category_path == ('real-estate', 'land')
+    # A neighbourhood breadcrumb links to /s/<city>/<neighbourhood>/<category>,
+    # so the slug is the last segment that is not the category.
+    assert parsed.place_refs == ('band-e-pey', 'nowshahr', 'mazandaran')
+
+
+def test_breadcrumb_refs_ignore_category_segments_in_place_urls():
+    breadcrumbs = [
+        {'title': 'مازندران', 'url': 'https://www.sheypoor.com/s/mazandaran', 'type': 'region'},
+        {'title': 'آمل', 'url': 'https://www.sheypoor.com/s/amol', 'type': 'city'},
+        {'title': 'املاک', 'url': 'https://www.sheypoor.com/s/amol/real-estate', 'type': 'category'},
+        {'title': 'زمین و باغ', 'url': 'https://www.sheypoor.com/s/amol/land', 'type': 'category'},
+        {'title': 'شهرک', 'url': 'https://www.sheypoor.com/s/amol/shahrak/land', 'type': 'neighbourhood'},
+    ]
+
+    assert sheypoor.breadcrumb_refs(breadcrumbs) == (
+        ('real-estate', 'land'),
+        ('shahrak', 'amol', 'mazandaran'),
+    )
+
+
+def test_breadcrumbs_that_are_missing_leave_the_fields_empty():
+    assert sheypoor.breadcrumb_refs(None) == ((), ())
+    assert sheypoor.breadcrumb_refs([{'type': 'category'}]) == ((), ())

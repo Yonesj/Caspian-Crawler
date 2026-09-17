@@ -15,7 +15,7 @@ deliberately traded for a sound, well-tested architecture.
 | 0 | Foundation: settings, env-driven DB, `accounts`, schema docs, test harness | done |
 | 1 | Domain data: provinces/cities/regions, listings, status history | done |
 | 2 | Source integrations: Divar + Sheypoor adapters, retry/backoff, rate limits | done |
-| 3 | Normalization: Persian digits, Toman/Rial, Jalali dates, locations | planned |
+| 3 | Normalization: Persian digits, Toman/Rial, Jalali dates, locations | done |
 | 4 | Crawl pipeline: jobs, Celery worker + beat, observability | planned |
 | 5 | Deduplication and listing lifecycle | planned |
 | 6 | API endpoints, Dockerfile, docker-compose, full README | planned |
@@ -99,9 +99,10 @@ a populated `.env`.
 ## Running tests
 
 ```bash
-uv run pytest               # default: fast, offline, no browser
-uv run pytest tests/sources # crawler layer only (no database needed)
-uv run pytest -m network    # opt-in checks against the live sources
+uv run pytest                     # default: fast, offline, no browser
+uv run pytest tests/normalization # normalization unit tests (no database needed)
+uv run pytest tests/sources       # crawler layer only (no database needed)
+uv run pytest -m network          # opt-in checks against the live sources
 uv run pytest -m playwright
 ```
 
@@ -114,9 +115,13 @@ pytest-django create `test_<database>`. Without it, only non-database tests run.
 
 Covered so far: authentication endpoints, schema generation, the location
 hierarchy and its integrity constraints, the `seed_locations` command
-(idempotency, dry-run, malformed input), the listing model's identity, price,
-ordering and status-history rules, and the whole crawler layer — retry/backoff
-and `Retry-After` behaviour, both rate limiters, and both source parsers.
+(idempotency, dry-run, malformed input, source-id validation), the listing
+model's identity, price, ordering and status-history rules, the whole crawler
+layer — retry/backoff and `Retry-After` behaviour, both rate limiters, and both
+source parsers — and the normalization layer: digit and letter folding, price
+canonicalization, Jalali dates, category and title classification, attribute
+extraction and location resolution, including end-to-end runs over the committed
+fixtures.
 
 Parsers and the transport are tested against committed fixtures and a mocked
 HTTP transport, so no default test performs a live request; `-m network` runs
@@ -136,8 +141,56 @@ uv run python manage.py capture_source_fixtures --source sheypoor --keep-raw
 ```
 
 `--trim N` controls how many listings are kept, `--scope` overrides the place
-id/slug, `--detail-index` picks which listing is also captured in detail, and
-untrimmed copies go to the gitignored `var/fixtures-raw/`.
+id/slug, `--category` scopes the crawl to one of the source's own categories
+(needed to capture a sale or a rent detail deliberately), `--detail-only`
+refreshes just the detail page, `--detail-index` picks which listing is also
+captured in detail, and untrimmed copies go to the gitignored
+`var/fixtures-raw/`. The manifest is merged rather than replaced, and each file
+records the category it was captured under.
+
+The committed Divar details cover both money shapes — `divar_detail_gar-qQRf`
+(apartment sale, `قیمت کل`), `divar_detail_gas6SGcg` (apartment rent, `ودیعه` +
+`اجارهٔ ماهانه`) and `divar_detail_gasGkf8r` (commercial rent) — and
+`sheypoor_detail_464398666` covers a negotiable (`توافقی`) asking price with a
+neighbourhood breadcrumb.
+
+## Normalization
+
+`core.normalization` is the only place that knows how one source's wording maps
+onto the shared representation. It is pure: adapters hand it DTOs and it returns
+a frozen `NormalizedListing`; nothing is written to the database (persistence is
+the crawl pipeline's job) and nothing here touches the network.
+
+- **Text.** Persian and Arabic-Indic digits are converted before numeric fields
+  are parsed; display text only loses invisible directionality marks and
+  whitespace runs, so a title is never rewritten. Matching keys (attribute
+  labels, place names) are folded harder — Arabic `ي`/`ك` to Persian `ی`/`ک`,
+  diacritics removed (`اجارهٔ` = `اجاره`), zero-width joiners dropped — which is
+  the folding `LocationAlias` documents.
+- **Money.** One canonical unit (Toman). `۳۰,۰۰۰,۰۰۰ تومان` becomes `30000000`;
+  a Rial price is divided by ten; `میلیون`/`میلیارد`/`هزار` are applied; a range
+  keeps its lower bound with the raw text retained. `توافقی` sets
+  `is_price_negotiable` and stores no amount, and a published `0` (Divar's way
+  of saying it has no price) is stored as NULL, never as zero. Text that cannot
+  be read at all is logged and left NULL rather than guessed.
+- **Dates.** Divar prints Jalali (`انتشار آگهی: ۲۶ شهریور ۱۴۰۵، ۲۳:۰۷`) and
+  Sheypoor a naive Gregorian stamp; both are Tehran wall-clock, so both are
+  converted to timezone-aware UTC. A stamp that cannot be parsed is NULL.
+- **Classification.** Property type comes from the source's own category slugs
+  (`apartment-sell`, `houses-apartments-for-sale`, `land`), matched on category
+  tokens rather than a per-source table. Transaction type comes from the same
+  slugs, falling back to the listing's title only when the category is silent
+  (`فروش`, `اجاره`, `رهن`); a title that mentions both stays ambiguous. Anything
+  unreadable is `unspecified`/`other` — a city-wide Divar crawl returns jobs and
+  pets, and those are labelled as the non-property they are instead of being
+  forced into a property category.
+- **Locations.** The source's own place identifier wins (`SourceLocation`,
+  matched through the seeded `source_ids`), then the printed place text against
+  `LocationAlias` and the canonical names, most specific level first. The matched
+  row's ancestors are filled in from the hierarchy; a place that is not in the
+  reference data leaves all three foreign keys NULL rather than a partial guess.
+  Divar's short-term/nightly rentals keep NULL amounts: a per-night rate is not
+  representable in the monthly or total-price columns.
 
 ## Project layout
 
@@ -146,6 +199,7 @@ config/settings/     # split settings: base / development / test / production
 core/accounts/       # project user model and JWT endpoints
 core/locations/      # province/city/region reference data + seed command
 core/listings/       # normalized listing, images, status history
+core/normalization/  # source DTOs -> normalized listings (pure, DB-free)
 core/sources/        # source vocabulary, adapters, HTTP transport, rate limiting
 tests/               # unit, integration and fixture-based parser tests
 ```
@@ -170,7 +224,13 @@ main cities, with neighbourhoods seeded for the largest cities only.
 
 `seed_locations` loads `core/locations/data/locations.json` idempotently
 (create-or-update keyed on the stable `code`), so it is safe to run from a
-deployment entrypoint and re-run after the data file changes. Rows are never
+deployment entrypoint and re-run after the data file changes. Each level may
+carry `source_ids` — the identifiers the sources themselves use, such as Divar's
+`22` or Sheypoor's `nowshahr` for Sari and Nowshahr — which become
+`SourceLocation` rows; the command refuses a file that reuses one source id for
+two places. Coverage starts with the three provinces and the places the fixtures
+touch; growing it is a data edit, not a code change (Divar publishes its own
+city list at `GET https://api.divar.ir/v8/places/cities`). Rows are never
 deleted: listings reference locations with `PROTECT`.
 
 **Listings** (`core.listings`) store the normalized representation only.
@@ -194,7 +254,7 @@ source is handled according to its published restrictions.
 
 | Source | Access notes (verified live) | Approach |
 | --- | --- | --- |
-| Divar | `divar.ir/robots.txt` and `api.divar.ir/robots.txt` allow all paths. The JSON API divar.ir's own web client uses: `POST /v8/postlist/w/search` returns 25 listings per page and `GET /v8/posts-v2/web/<token>` returns one detail document. Pagination is cursor-based: the response's `pagination.data` is sent back verbatim as `pagination_data` to obtain the next page, and crawling stops when `has_next_page` is false (verified: pages 1-3 share no listings). `/v5/*` answers 403 and is not used. Detail pages carry `seo.unavailable_after`, which later milestones read as an availability signal. | HTTP/JSON adapter, no browser |
+| Divar | `divar.ir/robots.txt` and `api.divar.ir/robots.txt` allow all paths. The JSON API divar.ir's own web client uses: `POST /v8/postlist/w/search` returns 25 listings per page and `GET /v8/posts-v2/web/<token>` returns one detail document. Pagination is cursor-based: the response's `pagination.data` is sent back verbatim as `pagination_data` to obtain the next page, and crawling stops when `has_next_page` is false (verified: pages 1-3 share no listings). The category filter belongs under `search_data.form_data.data.category` — the shape the site's own breadcrumbs use — and is honoured (`city_ids: ["22"]` + `apartment-sell` returns 25 Sari apartments); the same body with a `filters.data.category` key returns HTTP 200 but ignores the filter, so it is not used. `/v5/*` answers 403 and is not used. Detail pages carry `seo.unavailable_after`, which later milestones read as an availability signal. | HTTP/JSON adapter, no browser |
 | Sheypoor | `robots.txt` allows listing paths and `page_num` pagination and disallows `/search`, `/session`, `/pro` and bare query strings, all of which the adapter avoids: it only requests `/s/<slug>` and `?page_num=N`. Listings are embedded in the server-rendered Next.js React Flight stream (`self.__next_f.push` chunks, `<hex-id>:<payload>` rows with `"$id"` references), which the adapter rebuilds and resolves. Detail URLs are slugged — an id-only URL 404s — so `fetch_detail` requires the URL the listing was found at. No masked or private contact data is extracted. | HTTP adapter + SSR payload parsing, no browser |
 
 Neither adapter sends credentials, bypasses access controls or extracts contact
@@ -252,7 +312,15 @@ retried — see "Fault tolerance and pacing" below.
   worse than a missed duplicate.
 - **Money is stored in a single canonical unit (Toman)** with an explicit
   currency and flags for negotiable/unspecified prices; "not specified" is never
-  stored as `0`.
+  stored as `0`. `price_currency` names the unit of the *stored* amount, so it is
+  `IRT` for every row today: a price published in Rial is divided by ten and the
+  original wording is kept in `raw_data`.
+- **Normalization is a pure layer.** It converts adapter DTOs to a source-
+  independent `NormalizedListing` with no database writes and no network access,
+  so the highest-value tests in the project (digits, money, dates, category and
+  place mapping) run as plain unit tests. The location index it resolves places
+  against is built from the reference tables once per crawl and is constructible
+  from plain data in tests.
 - **Locations are data, not code.** Provinces, cities and each source's external
   location identifiers live in the database, so adding a city requires no code
   change.

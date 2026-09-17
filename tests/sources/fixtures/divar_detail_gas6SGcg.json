@@ -1,0 +1,1072 @@
+{
+  "sections": [
+    {
+      "section_name": "BREADCRUMB",
+      "widgets": [
+        {
+          "widget_type": "BREADCRUMB",
+          "data": {
+            "@type": "type.googleapis.com/widgets.BreadcrumbData",
+            "parent_items": [
+              {
+                "title": "املاک",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "real-estate"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              },
+              {
+                "title": "اجارهٔ مسکونی",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "residential-rent"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              },
+              {
+                "title": "اجارهٔ آپارتمان",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "apartment-rent"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              }
+            ],
+            "current_page_title": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا",
+            "padded": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "TITLE",
+      "widgets": [
+        {
+          "widget_type": "LEGEND_TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.LegendTitleRowData",
+            "title": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا",
+            "high_level_heading": true,
+            "padding": "NO_PADDING"
+          }
+        },
+        {
+          "widget_type": "EXPANDABLE_SECTION",
+          "data": {
+            "@type": "type.googleapis.com/widgets.ExpandableSectionData",
+            "widget_list": [
+              {
+                "widget_type": "DESCRIPTION_ROW",
+                "data": {
+                  "@type": "type.googleapis.com/widgets.DescriptionRowData",
+                  "text": "انتشار آگهی: ۲۶ شهریور ۱۴۰۵، ۲۱:۴۵\nآخرین به‌روز‌رسانی: ۲۶ شهریور ۱۴۰۵، ۲۲:۰۶",
+                  "is_primary": true,
+                  "small": true,
+                  "text_alignment": "RIGHT"
+                }
+              }
+            ],
+            "title": "۲ ساعت پیش در ساری، خ حافظ",
+            "icon": {}
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "زنگ خطرهای قبل از معامله",
+            "action": {
+              "type": "OPEN_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenPagePayload",
+                "request_http_method": "POST",
+                "request_data": {
+                  "@type": "type.googleapis.com/post_api_v2.GetFraudAlertPageRequest.Data",
+                  "category": "apartment-rent"
+                },
+                "specification": {
+                  "@type": "type.googleapis.com/widgets.OpenPagePayload.SimplePageSpecification",
+                  "navigation_button": "BACK"
+                },
+                "is_modal": true,
+                "rest_request_path": "/v8/postview/fraud-alert",
+                "grpc_request_path": "/post_api_v2.PostApi/GetFraudAlertPage"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/warning.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/warning.png",
+              "icon_name": "WARNING",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.PostWarningInfo",
+                "post_token": "gas6SGcg"
+              },
+              "item_type": {
+                "type": "POST_WARNING"
+              }
+            },
+            "enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "DESCRIPTION",
+      "widgets": [
+        {
+          "widget_type": "TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.TitleRowData",
+            "text": "توضیحات",
+            "text_color": "TEXT_PRIMARY",
+            "text_type": "SECONDARY"
+          }
+        },
+        {
+          "widget_type": "DESCRIPTION_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.DescriptionRowData",
+            "text": "به دنبال مستاجر خانم موجه و بی‌حاشیه هستیم. ترجیحا دو نفر باشند (مادر دختر و یا دو خواهر). به دلیل اینکه صاحبخانه خانم بوده و خودشان ساکن در باغ ویلا هستند.\n\nمحیطی آرام و امن و مناسب برای دانشجویان و اهالی مطالعه\n\nتوجه: زوج زن و شوهر به هیچ عنوان پذیرفته نمی‌شود.\n\nمکان: محدوده شهر ساری (۵ کیلومتر) در یک روستا با ساکنین بومی و محیطی آرام\n\nمشخصات ملک: یک سوییت ۳۰ متری سنتی نوساز و مستقل و مجهز به سرویس ایرانی و فرنگی و کابینت ام دی اف و تقریبا مبله در یک باغ ویلا با درختان میوه و استخر\n\nقیمت: ۱۰۰ میلیون ودیعه و ماهانه ۱۰ میلیون اجاره\n\nمستاجر مجاز خواهد بود از محیط باغ، هم جهت پرورش حیوانات خانگی و هم جهت کشت و کار کشاوزی برای خودش استفاده نماید.\n\nلطفا اول شرایط را دقیق مطالعه کنید بعد تماس بگیرید.",
+            "is_primary": true,
+            "text_alignment": "RIGHT"
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "IMAGE",
+      "widgets": [
+        {
+          "widget_type": "IMAGE_CAROUSEL",
+          "data": {
+            "@type": "type.googleapis.com/widgets.ImageCarouselData",
+            "items": [
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/8kCl2yFmt8n5YTmSxyD39A/fe416cb2-ccfe-401d-95ef-1af8beb8bdb3.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/wBXot5GPIabH8AJPMUEmmg/fe416cb2-ccfe-401d-95ef-1af8beb8bdb3.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/lreDfCjxdQdaGicRFIZl7Q/b689a828-9d28-4853-ba0b-72f76a66083c.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/ryPlcCIlxi_katN9U83Ifg/b689a828-9d28-4853-ba0b-72f76a66083c.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/kJ6ZtyyS6NNamq0yih7O0Q/4cc178e9-8b29-4fd2-8f0a-eb69c089aa1b.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/fEteb3kEe45paaceJdFZJQ/4cc178e9-8b29-4fd2-8f0a-eb69c089aa1b.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/4h79buIkoMlP5BxXIsQnQw/e2482b45-b201-43af-87e2-318fef785add.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/wTVoxydXplhGHLOXT7zZmw/e2482b45-b201-43af-87e2-318fef785add.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/MWC2OCXJXb7QqHj7uElGdA/515ef5f4-672c-4d9b-a9b6-7963d2abb902.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/42bGIL9NB55g5ezL24BwZA/515ef5f4-672c-4d9b-a9b6-7963d2abb902.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/yiHHeHksOZYdL1TFPht8tA/3808613e-0659-4928-b31b-186b3a936e65.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/Uuf02c8o28p4AqAA4fmQ4Q/3808613e-0659-4928-b31b-186b3a936e65.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/YpxSfHy8cBxZQOpHVFXfIA/88514db6-b1d3-4895-b4b5-fd6a26ebef40.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/GcnYDtMvE0OPJt84uCqVxw/88514db6-b1d3-4895-b4b5-fd6a26ebef40.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/y-zK633In4gwywAoDDPhhQ/348d845d-d233-44c0-80f0-78b6b524a688.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/CxE5KLHHT3CiGwq1NnwR6g/348d845d-d233-44c0-80f0-78b6b524a688.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/221iNreBS9Ubffwjf1_AZg/d925b1d5-f379-48a5-839f-b3a394fc6c48.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/VfDZmnpNH-Wd6aiY7tobow/d925b1d5-f379-48a5-839f-b3a394fc6c48.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/ZemnrBqXohQ4whhk4W82-g/26598cb2-9ffb-49e4-862c-bf051a8e78fa.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/4h5sw1dmhY_9_x4OykWktQ/26598cb2-9ffb-49e4-862c-bf051a8e78fa.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/PExaOU-merfQGCfAlZ56Yg/60f441f2-253b-41fb-ac3f-558c2296eca6.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/px5v1DgEm2E12itlJJcdvQ/60f441f2-253b-41fb-ac3f-558c2296eca6.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/LTaYJv1sHxnYJCu0Ni9E5w/b72732f8-5167-49b2-bfd3-760cd9f8e81c.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/Cea9Hpu-Xl5aZAOcQz7vfQ/b72732f8-5167-49b2-bfd3-760cd9f8e81c.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/HmDJZ9c5B6NApNaWGXa2Jw/bb9d5a24-36c0-4437-a41c-b324152cef44.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/d65pQ78HCjx0IdjPSmRbPQ/bb9d5a24-36c0-4437-a41c-b324152cef44.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/HITnElGzZ_lXnbrgmRi-SA/d45e5792-dec7-46ef-902e-362ffbcebff2.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/iybmzFKG3f4XY-GqquLzPA/d45e5792-dec7-46ef-902e-362ffbcebff2.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/-rmQtNL_yLIQcrmdwaQ40Q/9ca8f3ae-236e-4990-920f-bb12da289c01.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/_kPgswTD208t5aqjGSbW-g/9ca8f3ae-236e-4990-920f-bb12da289c01.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/wEJbBhf4k700VsVdnUMPwg/db865e29-ed32-4cb4-835d-fd3553c0563b.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/4H0Z6NvNTk2JbZoyqoLoJg/db865e29-ed32-4cb4-835d-fd3553c0563b.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/j3iY3WhaSY-0yBk141ndzg/1fca47f4-42a0-4ae6-902b-e027219d0038.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/ZWhNR4BVSGl7QZ4fUKcVIg/1fca47f4-42a0-4ae6-902b-e027219d0038.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/uP_CEGjSw0zt8NUbaarTiQ/f9ba5690-a774-4682-9818-01b53383b719.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/l2j-QPPgpxS_fPF2ReL8Lg/f9ba5690-a774-4682-9818-01b53383b719.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/7Ka7UjN8l4DDOQIdODDpjQ/bd0cd03a-61af-47da-8f16-b62b0c563c10.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/4mNqPU_V97-JspZJbrkoUQ/bd0cd03a-61af-47da-8f16-b62b0c563c10.webp"
+                }
+              },
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/nn2nkAOagwKnbnPvfpUsug/de5ae116-0c40-4ea8-9510-b858fa09c099.webp",
+                  "alt": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا|اجارهٔ آپارتمان|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/tiJ1T2QxuYHjHSQzm7IH7Q/de5ae116-0c40-4ea8-9510-b858fa09c099.webp"
+                }
+              }
+            ],
+            "image_aspect_ratio": {
+              "dynamic_aspect_ratio": {
+                "height": 3,
+                "width": 4
+              }
+            },
+            "has_preview": true,
+            "has_thumbnails": true,
+            "show_tooltip": true,
+            "tooltip_data": {
+              "icon": {
+                "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/white_primary/v1/fullscreen.png",
+                "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/white_primary/v1/fullscreen.png",
+                "icon_name": "FULLSCREEN",
+                "icon_color": "WHITE_PRIMARY"
+              },
+              "text": "۲۰"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "LIST_DATA",
+      "widgets": [
+        {
+          "widget_type": "GROUP_INFO_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.GroupInfoRow",
+            "items": [
+              {
+                "title": "متراژ",
+                "value": "۳۰"
+              },
+              {
+                "title": "ساخت",
+                "value": "۱۴۰۴"
+              },
+              {
+                "title": "اتاق",
+                "value": "۱"
+              }
+            ],
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "تصویر‌ها برای همین ملک است؟",
+            "value": "بله",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "ودیعه",
+            "value": "‏۱۰۰,۰۰۰,۰۰۰ تومان",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "اجارهٔ ماهانه",
+            "value": "‏۱۰,۰۰۰,۰۰۰ تومان",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "ودیعه و اجاره",
+            "value": "غیر قابل تبدیل",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "طبقه",
+            "value": "همکف",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "SECTION_TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SectionTitleRowData",
+            "title": "ویژگی‌ها و امکانات",
+            "title_color": "TEXT_PRIMARY",
+            "padding": "ALT"
+          }
+        },
+        {
+          "widget_type": "GROUP_FEATURE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.GroupFeatureRow",
+            "items": [
+              {
+                "title": "آسانسور",
+                "icon": {
+                  "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/elevator.png",
+                  "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/elevator.png",
+                  "icon_name": "ELEVATOR",
+                  "icon_color": "ICON_SECONDARY"
+                },
+                "available": true
+              },
+              {
+                "title": "پارکینگ",
+                "icon": {
+                  "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/parking.png",
+                  "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/parking.png",
+                  "icon_name": "PARKING",
+                  "icon_color": "ICON_SECONDARY"
+                },
+                "available": true
+              },
+              {
+                "title": "انباری",
+                "icon": {
+                  "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/cabinet.png",
+                  "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/cabinet.png",
+                  "icon_name": "CABINET",
+                  "icon_color": "ICON_SECONDARY"
+                },
+                "available": true
+              }
+            ],
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "سایر ویژگی‌ها و امکانات",
+            "action": {
+              "type": "LOAD_MODAL_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.LoadModalPagePayload",
+                "modal_page": {
+                  "title": "ویژگی‌ها و امکانات",
+                  "widget_list": [
+                    {
+                      "widget_type": "TITLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.TitleRowData",
+                        "text": "ویژگی‌ها",
+                        "has_divider": true,
+                        "text_color": "TEXT_PRIMARY"
+                      }
+                    },
+                    {
+                      "widget_type": "UNEXPANDABLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+                        "title": "تعداد واحد در طبقه",
+                        "value": "۱",
+                        "has_divider": true
+                      }
+                    },
+                    {
+                      "widget_type": "DESCRIPTION_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.DescriptionRowData",
+                        "text": "مناسب برای",
+                        "is_primary": true,
+                        "expandable": true,
+                        "padded": true,
+                        "preview_max_line": 4,
+                        "text_alignment": "RIGHT"
+                      }
+                    },
+                    {
+                      "widget_type": "WRAPPER_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.WrapperRowData",
+                        "chip_list": {
+                          "chips": [
+                            {
+                              "text": "مجرد",
+                              "type": "ACTION",
+                              "small": true
+                            },
+                            {
+                              "text": "دانشجو",
+                              "type": "ACTION",
+                              "small": true
+                            }
+                          ]
+                        },
+                        "padded": true
+                      }
+                    },
+                    {
+                      "widget_type": "DESCRIPTION_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.DescriptionRowData",
+                        "text": "جنس کابینت",
+                        "is_primary": true,
+                        "expandable": true,
+                        "padded": true,
+                        "preview_max_line": 4,
+                        "text_alignment": "RIGHT"
+                      }
+                    },
+                    {
+                      "widget_type": "WRAPPER_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.WrapperRowData",
+                        "chip_list": {
+                          "chips": [
+                            {
+                              "text": "MDF",
+                              "type": "ACTION",
+                              "small": true
+                            }
+                          ]
+                        },
+                        "padded": true
+                      }
+                    },
+                    {
+                      "widget_type": "UNEXPANDABLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+                        "title": "استخر",
+                        "value": "دارد",
+                        "has_divider": true
+                      }
+                    },
+                    {
+                      "widget_type": "TITLE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.TitleRowData",
+                        "text": "امکانات",
+                        "has_divider": true,
+                        "text_color": "TEXT_PRIMARY"
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "آسانسور",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/elevator.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/elevator.png",
+                          "icon_name": "ELEVATOR",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "پارکینگ",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/parking.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/parking.png",
+                          "icon_name": "PARKING",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "انباری",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/cabinet.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/cabinet.png",
+                          "icon_name": "CABINET",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "جنس کف موکت",
+                        "has_divider": true,
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/texture.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/texture.png",
+                          "icon_name": "TEXTURE",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    },
+                    {
+                      "widget_type": "FEATURE_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.FeatureRowData",
+                        "title": "سرویس بهداشتی ایرانی و فرنگی",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/wc.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/wc.png",
+                          "icon_name": "WC",
+                          "icon_color": "ICON_SECONDARY"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "has_divider": true,
+            "icon": {},
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z",
+            "fullwidth": true
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.ViewPostFeaturesInfo",
+                "post_token": "gas6SGcg"
+              },
+              "item_type": {
+                "type": "VIEW_POST_FEATURES"
+              }
+            },
+            "enabled": true
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "بررسی و کارشناسی",
+            "action": {
+              "type": "OPEN_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenPagePayload",
+                "request_http_method": "POST",
+                "request_data": {
+                  "@type": "type.googleapis.com/service_providers.GetServiceProvidersPageRequest.RequestData",
+                  "source_v2": "DEMAND_POST",
+                  "filter": {
+                    "service_types": [
+                      "REPORT_INSPECTION"
+                    ],
+                    "city_id": 22,
+                    "category": "apartment-rent",
+                    "post_token": "gas6SGcg",
+                    "touchpoint": "DEMAND_POST"
+                  },
+                  "action_data_builder": {
+                    "conversation_id": "gas6SGcg",
+                    "post_token": "gas6SGcg",
+                    "touchpoint": "DEMAND_POST",
+                    "source": "DEMAND_POST",
+                    "lead_source": "DEMAND"
+                  },
+                  "display_data": {
+                    "page_title": "بررسی و کارشناسی"
+                  },
+                  "trace_id": "e46e899b-9598-4974-ab98-b7ac75eec6f7",
+                  "source": "DEMAND_POST",
+                  "lead_source": "DEMAND"
+                },
+                "specification": {
+                  "@type": "type.googleapis.com/widgets.OpenPagePayload.SimplePageSpecification"
+                },
+                "is_modal": true,
+                "rest_request_path": "/v8/open-platform/service-providers",
+                "grpc_request_path": "/service_providers.ServiceProviders/GetServiceProvidersPage"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/article-magnifier.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/article-magnifier.png",
+              "icon_name": "ARTICLE_MAGNIFIER",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "TAGS",
+      "widgets": [
+        {
+          "widget_type": "WRAPPER_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.WrapperRowData",
+            "chip_list": {
+              "chips": [
+                {
+                  "text": "اجارهٔ آپارتمان",
+                  "type": "ACTION",
+                  "action": {
+                    "type": "OPEN_POSTLIST_PAGE_GRPC",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                      "search_data": {
+                        "form_data": {
+                          "data": {
+                            "category": {
+                              "str": {
+                                "value": "apartment-rent"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "source_view": "CATEGORY_BREAD_CRUMB",
+                      "source_view_str": "CATEGORY_BREAD_CRUMB"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "MAP",
+      "widgets": [
+        {
+          "widget_type": "MAP_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.MapRowData",
+            "location": {
+              "type": "FUZZY",
+              "fuzzy_data": {
+                "point": {
+                  "latitude": 36.555483277631595,
+                  "longitude": 53.06468742022095
+                },
+                "radius": 500
+              }
+            },
+            "image_url": "https://mapimage.divarcdn.com/v8/mapimage?encrypted_data=MTIzNDU2Nzg5MTIzXMkcZYJEUK_uQtqQQYxpU_lLY5ccFMufQViCzk5bWpfUBQ==&is_nearby=true"
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.MapInfo",
+                "post_token": "gas6SGcg"
+              },
+              "item_type": {
+                "type": "MAP"
+              }
+            },
+            "enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "NOTE",
+      "widgets": [
+        {
+          "widget_type": "NOTE",
+          "data": {
+            "@type": "type.googleapis.com/widgets.NoteData",
+            "title": "یادداشت من",
+            "button_title": "ویرایش یادداشت",
+            "post_token": "gas6SGcg",
+            "icon_button": {
+              "icon": {
+                "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/more_vert.png",
+                "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/more_vert.png",
+                "icon_name": "MORE_VERT",
+                "icon_color": "ICON_SECONDARY"
+              },
+              "action": {
+                "type": "LOAD_MENU",
+                "payload": {
+                  "@type": "type.googleapis.com/widgets.LoadMenuPayload",
+                  "menu": {
+                    "items": [
+                      {
+                        "text": "ویرایش یادداشت",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/edit.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/edit.png",
+                          "icon_name": "EDIT",
+                          "icon_color": "ICON_SECONDARY"
+                        },
+                        "action": {
+                          "type": "NOTE",
+                          "payload": {
+                            "@type": "type.googleapis.com/widgets.NotePayload",
+                            "post_token": "gas6SGcg",
+                            "max_character_count": 256
+                          }
+                        },
+                        "alignment": "RIGHT"
+                      },
+                      {
+                        "text": "حذف یادداشت",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_primary/v1/trash_o.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_primary/v1/trash_o.png",
+                          "icon_name": "TRASH_O",
+                          "icon_color": "ICON_PRIMARY"
+                        },
+                        "action": {
+                          "type": "MAKE_NETWORK_CALL",
+                          "payload": {
+                            "@type": "type.googleapis.com/widgets.MakeNetworkCallPayload",
+                            "grpc_request_path": "/yaad_v2.YaadV2/DeleteNoteV2",
+                            "rest_request_path": "/yaad/delete-note-v2",
+                            "request_data": {
+                              "@type": "type.googleapis.com/yaad_v2.DeleteNoteV2Request.RequestData",
+                              "token": "gas6SGcg"
+                            },
+                            "needs_auth": true
+                          }
+                        },
+                        "alignment": "RIGHT",
+                        "state": "STATE_NEGATIVE"
+                      }
+                    ],
+                    "banner": {}
+                  },
+                  "display_type": "LOAD_MENU_DISPLAY_TYPE_BOTTOM_SHEET"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "STATIC",
+      "widgets": [
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "گزارش آگهی",
+            "action": {
+              "type": "OPEN_FORM_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenFormPagePayload",
+                "grpc_servicer": "/post_quality.PostQualityFeedback/GetFeedbackForm",
+                "request_data": {
+                  "@type": "type.googleapis.com/post_quality.GetFeedbackFormRequest.RequestData",
+                  "post_token": "gas6SGcg"
+                },
+                "rest_request_path": "/v8/post-quality/feedback-form"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/report.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/report.png",
+              "icon_name": "REPORT",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          }
+        }
+      ]
+    }
+  ],
+  "share": {
+    "title": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا",
+    "web_url": "https://divar.ir/v/gas6SGcg"
+  },
+  "seo": {
+    "title": "اجاره مستاجر خانم برای خانه باغ ویلا سنتی در روستا در ساری - ۲۶ شهریور ۱۴۰۵",
+    "description": "آگهی مستاجر خانم برای خانه باغ ویلا سنتی در روستا در دیوار ساری",
+    "android_package_name": "ir.divar",
+    "android_app_url": "android-app://ir.divar/http/v/مستاجر خانم برای خانه باغ ویلا سنتی در روستا/gas6SGcg/",
+    "web_info": {
+      "title": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا",
+      "city_persian": "ساری",
+      "category_slug_persian": "اجارهٔ آپارتمان"
+    },
+    "unavailable_after": "2026-10-18T21:45:14.285191",
+    "bread_crumb": [
+      {
+        "name": "اجارهٔ آپارتمان",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "category": {
+                "str": {
+                  "value": "apartment-rent"
+                }
+              },
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "اجارهٔ مسکونی",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "category": {
+                "str": {
+                  "value": "residential-rent"
+                }
+              },
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "املاک",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              },
+              "category": {
+                "str": {
+                  "value": "real-estate"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "0",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "22",
+        "search_data": {
+          "form_data": {}
+        }
+      },
+      {
+        "name": "دیوار"
+      }
+    ],
+    "post_seo_schema": {
+      "web_info": {
+        "title": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا",
+        "city_persian": "ساری",
+        "district_persian": "",
+        "category_slug_persian": "اجارهٔ آپارتمان"
+      },
+      "name": "مستاجر خانم برای خانه باغ ویلا سنتی در روستا",
+      "image": "https://s100.divarcdn.com/static/photo/neda/webp_post/8kCl2yFmt8n5YTmSxyD39A/fe416cb2-ccfe-401d-95ef-1af8beb8bdb3.webp",
+      "url": "https://divar.ir/v/مستاجر-خانم-برای-خانه-باغ-ویلا-سنتی-در-روستا/gas6SGcg",
+      "accommodationCategory": "اجارهٔ آپارتمان",
+      "geo": {
+        "latitude": "36.555014595175",
+        "longitude": "53.064712876968",
+        "@type": "GeoCoordinates",
+        "address": "ساری"
+      },
+      "@context": "https://schema.org",
+      "@type": "Apartment",
+      "description": "به دنبال مستاجر خانم موجه و بی‌حاشیه هستیم. ترجیحا دو نفر باشند (مادر دختر و یا دو خواهر). به دلیل اینکه صاحبخانه خانم بوده و خودشان ساکن در باغ ویلا هستند.\n\nمحیطی آرام و امن و مناسب برای دانشجویان و اهالی مطالعه\n\nتوجه: زوج زن و شوهر به هیچ عنوان پذیرفته نمی‌شود.\n\nمکان: محدوده شهر ساری (۵ کیلومتر) در یک روستا با ساکنین بومی و محیطی آرام\n\nمشخصات ملک: یک سوییت ۳۰ متری سنتی نوساز و مستقل و مجهز به سرویس ایرانی و فرنگی و کابینت ام دی اف و تقریبا مبله در یک باغ ویلا با درختان میوه و استخر\n\nقیمت: ۱۰۰ میلیون ودیعه و ماهانه ۱۰ میلیون اجاره\n\nمستاجر مجاز خواهد بود از محیط باغ، هم جهت پرورش حیوانات خانگی و هم جهت کشت و کار کشاوزی برای خودش استفاده نماید.\n\nلطفا اول شرایط را دقیق مطالعه کنید بعد تماس بگیرید.",
+      "numberOfRooms": "یک",
+      "floorSize": {
+        "unitCode": "MTK",
+        "@type": "QuantitativeValue",
+        "value": "30"
+      }
+    },
+    "image_url": "https://s100.divarcdn.com/static/photo/neda/post/amq4xSGsOQw_xqweduuC5w/fe416cb2-ccfe-401d-95ef-1af8beb8bdb3.jpg"
+  },
+  "contact": {
+    "chat_enabled": true,
+    "action_log": {
+      "server_side_info": {
+        "info": {
+          "@type": "type.googleapis.com/action_log.ContactInfoInfo",
+          "post_token": "gas6SGcg",
+          "method_name": "GetContactWeb",
+          "contact_uuid": "8614ec3a-82f6-46d7-a9c1-2d2b1ed479e3"
+        },
+        "item_type": {
+          "type": "CONTACT_INFO"
+        }
+      },
+      "enabled": true
+    },
+    "contact_uuid": "8614ec3a-82f6-46d7-a9c1-2d2b1ed479e3"
+  },
+  "city": {
+    "city_id": "22",
+    "name": "ساری",
+    "parent_id": "893",
+    "second_slug": "sari"
+  }
+}

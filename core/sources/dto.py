@@ -18,11 +18,16 @@ class CrawlScope:
     ``external_id`` is the source's own identifier for the place: Divar's
     numeric place id (``"22"``) or Sheypoor's path slug (``"mazandaran"``).  How
     a local city maps onto it is reference data (``SourceLocation``), not code.
+
+    ``category`` narrows the crawl to one of the source's own category slugs
+    (Divar's ``apartment-sell``); it is optional because sources differ in how
+    (and whether) they expose one.
     """
 
     external_id: str
     label: str = ''
     page_limit: int | None = None
+    category: str | None = None
 
     def __post_init__(self):
         if not self.external_id:
@@ -33,7 +38,16 @@ class CrawlScope:
 
 @dataclass(frozen=True)
 class ListingStub:
-    """A listing as it appears on a search/list page."""
+    """A listing as it appears on a search/list page.
+
+    ``category_path`` and ``place_refs`` carry the source's *own* identifiers,
+    ordered general-to-specific and specific-first respectively, so the
+    normalization layer can map them through reference data instead of reading
+    a source payload.  Both are empty when the page does not publish them.
+
+    The detail DTOs of both sources carry them; list pages rarely do, which is
+    why detail pages are the classification path in the crawl pipeline.
+    """
 
     source: str
     source_id: str
@@ -42,6 +56,8 @@ class ListingStub:
     raw_price: str | None = None
     raw_location: str = ''
     image_url: str | None = None
+    category_path: tuple[str, ...] = ()
+    place_refs: tuple[str, ...] = ()
     extra: dict[str, Any] = field(default_factory=dict)
 
 
@@ -59,6 +75,8 @@ class ListingDetail:
     attributes: dict[str, str] = field(default_factory=dict)
     image_urls: list[str] = field(default_factory=list)
     published_at_text: str | None = None
+    category_path: tuple[str, ...] = ()
+    place_refs: tuple[str, ...] = ()
     raw: dict[str, Any] = field(default_factory=dict)
 
 

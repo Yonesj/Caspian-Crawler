@@ -4,12 +4,14 @@
       "code": "mazandaran",
       "name_fa": "مازندران",
       "name_en": "Mazandaran",
+      "source_ids": {"divar": "893", "sheypoor": "mazandaran"},
       "aliases": ["استان مازندران", "مازندران"],
       "cities": [
         {
           "code": "sari",
           "name_fa": "ساری",
           "name_en": "Sari",
+          "source_ids": {"divar": "22", "sheypoor": "sari"},
           "regions": [
             {"code": "farhang-shahr", "name_fa": "فرهنگشهر", "name_en": "Farhang Shahr"},
             {"code": "tabarestan", "name_fa": "طبرستان", "name_en": "Tabarestan"},
@@ -26,7 +28,16 @@
         },
         {"code": "behshahr", "name_fa": "بهشهر", "name_en": "Behshahr"},
         {"code": "chalus", "name_fa": "چالوس", "name_en": "Chalus"},
-        {"code": "nowshahr", "name_fa": "نوشهر", "name_en": "Nowshahr"},
+        {
+          "code": "nowshahr",
+          "name_fa": "نوشهر",
+          "name_en": "Nowshahr",
+          "source_ids": {"divar": "709", "sheypoor": "nowshahr"},
+          "regions": [
+            {"code": "band-e-pey", "name_fa": "بندپی", "name_en": "Band-e Pey",
+             "source_ids": {"sheypoor": "band-e-pey"}}
+          ]
+        },
         {"code": "ramsar", "name_fa": "رامسر", "name_en": "Ramsar"},
         {"code": "tonekabon", "name_fa": "تنکابن", "name_en": "Tonekabon"},
         {"code": "babolsar", "name_fa": "بابلسر", "name_en": "Babolsar"},
@@ -39,6 +50,7 @@
       "code": "gilan",
       "name_fa": "گیلان",
       "name_en": "Gilan",
+      "source_ids": {"divar": "889", "sheypoor": "gilan"},
       "aliases": ["استان گیلان", "گیلان"],
       "cities": [
         {
@@ -81,6 +93,7 @@
       "code": "golestan",
       "name_fa": "گلستان",
       "name_en": "Golestan",
+      "source_ids": {"divar": "897", "sheypoor": "golestan"},
       "aliases": ["استان گلستان", "گلستان"],
       "cities": [
         {

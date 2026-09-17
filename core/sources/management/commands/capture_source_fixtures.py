@@ -39,6 +39,14 @@ class Command(BaseCommand):
             '--detail-index', type=int, default=0,
             help='Which listing of the captured list page to also capture in detail.',
         )
+        parser.add_argument(
+            '--category', default=None,
+            help="Source category slug to scope the crawl (Divar: 'apartment-sell').",
+        )
+        parser.add_argument(
+            '--detail-only', action='store_true',
+            help='Capture only the detail page; leave the existing list fixture alone.',
+        )
         parser.add_argument('--out', default='tests/sources/fixtures')
         parser.add_argument('--raw-dir', default='var/fixtures-raw')
         parser.add_argument('--trim', type=int, default=3, help='Listings per list fixture.')
@@ -52,24 +60,37 @@ class Command(BaseCommand):
         raw_dir = Path(options['raw_dir'])
 
         adapter = get_adapter(source)
-        scope = CrawlScope(external_id=scope_id, label=source)
-        manifest = {
+        scope = CrawlScope(
+            external_id=scope_id, label=source, category=options['category']
+        )
+        # Merge into the existing manifest: fixtures are refreshed one at a
+        # time, so a run that replaces one detail page must not forget the rest.
+        manifest_path = out_dir / f'{source}_manifest.json'
+        manifest = self._load_manifest(manifest_path)
+        manifest.update({
             'captured_at': datetime.now(UTC).isoformat(timespec='seconds'),
             'source': source,
             'scope': scope_id,
-            'files': {},
-        }
+        })
+        manifest.setdefault('files', {})
 
         if source == Source.DIVAR:
             self._capture_divar(adapter, scope, out_dir, raw_dir, options, manifest)
         else:
             self._capture_sheypoor(adapter, scope, out_dir, raw_dir, options, manifest)
 
-        manifest_path = out_dir / f'{source}_manifest.json'
         manifest_path.write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
         )
         self.stdout.write(self.style.SUCCESS(f'wrote {manifest_path}'))
+
+    def _load_manifest(self, path):
+        if not path.exists():
+            return {}
+        try:
+            return json.loads(path.read_text(encoding='utf-8'))
+        except json.JSONDecodeError:
+            return {}
 
     # -- capture --------------------------------------------------------------
     def _fetch(self, adapter, **kwargs):
@@ -86,10 +107,15 @@ class Command(BaseCommand):
     def _capture_divar(self, adapter, scope, out_dir, raw_dir, options, manifest):
         list_response = self._fetch(
             adapter, method='POST', url=DIVAR_LIST_URL, source=Source.DIVAR,
-            json_body={'city_ids': [scope.external_id]},
+            json_body=divar_adapter.list_body(scope),
         )
         raw_payload = json.loads(list_response.text)
         raw_page = divar_adapter.parse_list_page(raw_payload, scope, 1)
+        if options['detail_only']:
+            self._capture_divar_detail(
+                adapter, scope, raw_page, out_dir, raw_dir, options, manifest
+            )
+            return
         keep = options['trim']
         trimmed = {
             'list_widgets': [
@@ -106,9 +132,15 @@ class Command(BaseCommand):
             json.dumps(trimmed, ensure_ascii=False, indent=2) + '\n',
             list_response.text,
             options['keep_raw'], manifest,
-            {'url': DIVAR_LIST_URL, 'listings': len(trimmed_page.items)},
+            {'url': DIVAR_LIST_URL, 'listings': len(trimmed_page.items),
+             'category': scope.category},
         )
 
+        self._capture_divar_detail(
+            adapter, scope, raw_page, out_dir, raw_dir, options, manifest
+        )
+
+    def _capture_divar_detail(self, adapter, scope, raw_page, out_dir, raw_dir, options, manifest):
         if not raw_page.items:
             raise CommandError('divar: capture returned no listings')
         stub = raw_page.items[min(options['detail_index'], len(raw_page.items) - 1)]
@@ -132,7 +164,8 @@ class Command(BaseCommand):
             json.dumps(detail_trimmed, ensure_ascii=False, indent=2) + '\n',
             detail_response.text,
             options['keep_raw'], manifest,
-            {'url': DIVAR_DETAIL_URL.format(token=stub.source_id), 'listing': stub.source_id},
+            {'url': DIVAR_DETAIL_URL.format(token=stub.source_id), 'listing': stub.source_id,
+             'category': scope.category},
         )
 
     def _capture_sheypoor(self, adapter, scope, out_dir, raw_dir, options, manifest):
@@ -143,6 +176,11 @@ class Command(BaseCommand):
             source=Source.SHEYPOOR,
         )
         raw_page = sheypoor_adapter.parse_list_page(list_response.text, scope, 1)
+        if options['detail_only']:
+            self._capture_sheypoor_detail(
+                adapter, scope, raw_page, out_dir, raw_dir, options, manifest
+            )
+            return
         keep = options['trim']
         trimmed_html = trim_sheypoor_page(
             list_response.text, [item.source_id for item in raw_page.items[:keep]],
@@ -153,9 +191,15 @@ class Command(BaseCommand):
         self._write(
             out_dir, raw_dir, 'sheypoor_list_page1.html', trimmed_html,
             list_response.text, options['keep_raw'], manifest,
-            {'url': list_response.url, 'listings': len(trimmed_page.items)},
+            {'url': list_response.url, 'listings': len(trimmed_page.items),
+             'category': scope.category},
         )
 
+        self._capture_sheypoor_detail(
+            adapter, scope, raw_page, out_dir, raw_dir, options, manifest
+        )
+
+    def _capture_sheypoor_detail(self, adapter, scope, raw_page, out_dir, raw_dir, options, manifest):
         stub = raw_page.items[min(options['detail_index'], len(raw_page.items) - 1)]
         detail_response = self._fetch(
             adapter, method='GET', url=stub.url, source=Source.SHEYPOOR
@@ -173,7 +217,7 @@ class Command(BaseCommand):
         self._write(
             out_dir, raw_dir, f'sheypoor_detail_{stub.source_id}.html',
             trimmed_detail_html, detail_response.text, options['keep_raw'], manifest,
-            {'url': stub.url, 'listing': stub.source_id},
+            {'url': stub.url, 'listing': stub.source_id, 'category': scope.category},
         )
 
     # -- assertions -----------------------------------------------------------
@@ -185,7 +229,8 @@ class Command(BaseCommand):
 
     def _assert_detail_same(self, trimmed, raw, label):
         for field in ('source_id', 'url', 'title', 'description', 'raw_location',
-                      'raw_price', 'attributes', 'image_urls', 'published_at_text'):
+                      'raw_price', 'attributes', 'image_urls', 'published_at_text',
+                      'category_path', 'place_refs'):
             if getattr(trimmed, field) != getattr(raw, field):
                 raise CommandError(f'{label}: field {field} changed while trimming')
 

@@ -1,0 +1,618 @@
+{
+  "list_widgets": [
+    {
+      "widget_type": "POST_ROW",
+      "data": {
+        "@type": "type.googleapis.com/widgets.PostRowData",
+        "title": "میوه خوری کریستال طلاکوب بوهمیا اورجینال",
+        "action": {
+          "type": "VIEW_POST",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.ViewPostPayload",
+            "token": "gapqVBMq",
+            "web_info": {
+              "title": "میوه خوری کریستال طلاکوب بوهمیا اورجینال",
+              "city_persian": "ساری"
+            },
+            "ad_instance_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gapqVBMq_P"
+          }
+        },
+        "image_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/0ivtCVtaytwcoL0THF9T3A/73023d58-37b8-4b7c-a9fe-8c933e2918f6.webp",
+        "red_text": "پله شده",
+        "middle_description_text": "۱۰۰,۰۰۰,۰۰۰ تومان",
+        "has_divider": true,
+        "image_count": 3,
+        "top_description_text": "در حد نو",
+        "image_top_left_tag": {
+          "text": "پله",
+          "icon": {
+            "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/white_primary/v1/stairs.png",
+            "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/white_primary/v1/stairs.png",
+            "icon_name": "STAIRS",
+            "icon_color": "WHITE_PRIMARY"
+          }
+        },
+        "long_press_action": {
+          "type": "LOAD_MENU",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.LoadMenuPayload",
+            "menu": {
+              "items": [
+                {
+                  "text": "نشان کردن",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/bookmark_border.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/bookmark_border.png",
+                    "icon_name": "BOOKMARK_BORDER",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "MAKE_NETWORK_CALL",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.MakeNetworkCallPayload",
+                      "grpc_request_path": "/yaad_v2.YaadV2/SetBookmarkV2",
+                      "rest_request_path": "/yaad/bookmark-v2",
+                      "request_data": {
+                        "@type": "type.googleapis.com/yaad_v2.SetBookmarkV2Request.RequestData",
+                        "token": "gapqVBMq"
+                      },
+                      "needs_auth": true
+                    }
+                  },
+                  "alignment": "RIGHT"
+                },
+                {
+                  "text": "باز کردن در صفحه جدید",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/add_circle_outline.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/add_circle_outline.png",
+                    "icon_name": "ADD_CIRCLE_OUTLINE",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "VIEW_POST",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.ViewPostPayload",
+                      "token": "gapqVBMq",
+                      "web_info": {
+                        "title": "میوه خوری کریستال طلاکوب بوهمیا اورجینال",
+                        "open_new_tab": true
+                      }
+                    }
+                  },
+                  "alignment": "RIGHT"
+                }
+              ],
+              "banner": {}
+            },
+            "display_type": "LOAD_MENU_DISPLAY_TYPE_BOTTOM_SHEET"
+          }
+        },
+        "token": "gapqVBMq",
+        "should_indicate_seen_status": true,
+        "tracker_session_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gapqVBMq_P",
+        "layout_type": "GRID_ITEM"
+      },
+      "action_log": {
+        "server_side_info": {
+          "info": {
+            "@type": "type.googleapis.com/action_log.PostItemInfo",
+            "post_token": "gapqVBMq",
+            "index": 0,
+            "post_type": "PELLE",
+            "list_type": "PAGE",
+            "source_page": "POST_LIST_PAGE",
+            "extra_data": {
+              "@type": "type.googleapis.com/action_log.PostItemInfo.SearchExtraData",
+              "jli": {
+                "category": {
+                  "value": "ROOT"
+                },
+                "sort": {
+                  "value": "sort_date"
+                },
+                "places": {
+                  "value": [
+                    "22"
+                  ]
+                },
+                "cities": [
+                  "22"
+                ]
+              },
+              "search_uid": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c",
+              "search_data": {
+                "form_data_json": "{\"data\":{\"category\":{\"str\":{\"value\":\"ROOT\"}}}}",
+                "server_payload_json": "{\"@type\":\"type.googleapis.com/widgets.SearchData.ServerPayload\",\"additional_form_data\":{\"data\":{\"sort\":{\"str\":{\"value\":\"sort_date\"}}}}}",
+                "cities": [
+                  "22"
+                ],
+                "query_input_type": "TEXT",
+                "user_selected_location": {
+                  "@type": "type.googleapis.com/widgets.UserSelectedLocation",
+                  "places": [
+                    {
+                      "place_id": "22"
+                    }
+                  ]
+                }
+              }
+            },
+            "sort_date": "2026-09-15T14:45:32.413884Z"
+          },
+          "item_type": {
+            "type": "POST_ITEM"
+          }
+        },
+        "enabled": true
+      }
+    },
+    {
+      "widget_type": "POST_ROW",
+      "data": {
+        "@type": "type.googleapis.com/widgets.PostRowData",
+        "title": "SAMSUNG Galaxy Tab A",
+        "action": {
+          "type": "VIEW_POST",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.ViewPostPayload",
+            "token": "gasGUrho",
+            "web_info": {
+              "title": "SAMSUNG Galaxy Tab A",
+              "city_persian": "ساری"
+            },
+            "ad_instance_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gasGUrho_N"
+          }
+        },
+        "image_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/Vk1CGr0Wkg--gL-s41I0SQ/8098e0b5-7cab-4069-bd34-d43ff450ade2.webp",
+        "bottom_description_text": "دقایقی پیش",
+        "has_chat": true,
+        "middle_description_text": "۱۵,۰۰۰,۰۰۰ تومان",
+        "has_divider": true,
+        "image_count": 6,
+        "top_description_text": "کارکرده",
+        "image_top_left_tag": {
+          "text": "۶",
+          "icon": {
+            "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/white_primary/v1/camera.png",
+            "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/white_primary/v1/camera.png",
+            "icon_name": "CAMERA",
+            "icon_color": "WHITE_PRIMARY"
+          },
+          "is_icon_left": true
+        },
+        "long_press_action": {
+          "type": "LOAD_MENU",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.LoadMenuPayload",
+            "menu": {
+              "items": [
+                {
+                  "text": "نشان کردن",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/bookmark_border.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/bookmark_border.png",
+                    "icon_name": "BOOKMARK_BORDER",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "MAKE_NETWORK_CALL",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.MakeNetworkCallPayload",
+                      "grpc_request_path": "/yaad_v2.YaadV2/SetBookmarkV2",
+                      "rest_request_path": "/yaad/bookmark-v2",
+                      "request_data": {
+                        "@type": "type.googleapis.com/yaad_v2.SetBookmarkV2Request.RequestData",
+                        "token": "gasGUrho"
+                      },
+                      "needs_auth": true
+                    }
+                  },
+                  "alignment": "RIGHT"
+                },
+                {
+                  "text": "باز کردن در صفحه جدید",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/add_circle_outline.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/add_circle_outline.png",
+                    "icon_name": "ADD_CIRCLE_OUTLINE",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "VIEW_POST",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.ViewPostPayload",
+                      "token": "gasGUrho",
+                      "web_info": {
+                        "title": "SAMSUNG Galaxy Tab A",
+                        "open_new_tab": true
+                      }
+                    }
+                  },
+                  "alignment": "RIGHT"
+                }
+              ],
+              "banner": {}
+            },
+            "display_type": "LOAD_MENU_DISPLAY_TYPE_BOTTOM_SHEET"
+          }
+        },
+        "token": "gasGUrho",
+        "should_indicate_seen_status": true,
+        "tracker_session_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gasGUrho_N",
+        "layout_type": "GRID_ITEM"
+      },
+      "action_log": {
+        "server_side_info": {
+          "info": {
+            "@type": "type.googleapis.com/action_log.PostItemInfo",
+            "post_token": "gasGUrho",
+            "index": 0,
+            "post_type": "SEARCH",
+            "list_type": "PAGE",
+            "source_page": "POST_LIST_PAGE",
+            "extra_data": {
+              "@type": "type.googleapis.com/action_log.PostItemInfo.SearchExtraData",
+              "jli": {
+                "category": {
+                  "value": "ROOT"
+                },
+                "sort": {
+                  "value": "sort_date"
+                },
+                "places": {
+                  "value": [
+                    "22"
+                  ]
+                },
+                "cities": [
+                  "22"
+                ]
+              },
+              "search_uid": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c",
+              "search_data": {
+                "form_data_json": "{\"data\":{\"category\":{\"str\":{\"value\":\"ROOT\"}}}}",
+                "server_payload_json": "{\"@type\":\"type.googleapis.com/widgets.SearchData.ServerPayload\",\"additional_form_data\":{\"data\":{\"sort\":{\"str\":{\"value\":\"sort_date\"}}}}}",
+                "cities": [
+                  "22"
+                ],
+                "query_input_type": "TEXT",
+                "user_selected_location": {
+                  "@type": "type.googleapis.com/widgets.UserSelectedLocation",
+                  "places": [
+                    {
+                      "place_id": "22"
+                    }
+                  ]
+                }
+              }
+            },
+            "sort_date": "2026-09-17T19:38:31.618647Z"
+          },
+          "item_type": {
+            "type": "POST_ITEM"
+          }
+        },
+        "enabled": true
+      }
+    },
+    {
+      "widget_type": "POST_ROW",
+      "data": {
+        "@type": "type.googleapis.com/widgets.PostRowData",
+        "title": "اجاره مغازه",
+        "action": {
+          "type": "VIEW_POST",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.ViewPostPayload",
+            "token": "gasGkf8r",
+            "web_info": {
+              "title": "اجاره مغازه",
+              "city_persian": "ساری"
+            },
+            "ad_instance_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gasGkf8r_N"
+          }
+        },
+        "image_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/OYkef2zkqZoyfVXEN6EeAg/d2a7ac7b-9971-458b-901a-5868583f3941.webp",
+        "bottom_description_text": "دقایقی پیش",
+        "has_chat": true,
+        "middle_description_text": "اجاره: ۶۰,۰۰۰,۰۰۰ تومان",
+        "has_divider": true,
+        "image_count": 1,
+        "top_description_text": "ودیعه: ۳۰,۰۰۰,۰۰۰ تومان",
+        "image_top_left_tag": {
+          "text": "۱",
+          "icon": {
+            "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/white_primary/v1/camera.png",
+            "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/white_primary/v1/camera.png",
+            "icon_name": "CAMERA",
+            "icon_color": "WHITE_PRIMARY"
+          },
+          "is_icon_left": true
+        },
+        "long_press_action": {
+          "type": "LOAD_MENU",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.LoadMenuPayload",
+            "menu": {
+              "items": [
+                {
+                  "text": "نشان کردن",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/bookmark_border.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/bookmark_border.png",
+                    "icon_name": "BOOKMARK_BORDER",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "MAKE_NETWORK_CALL",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.MakeNetworkCallPayload",
+                      "grpc_request_path": "/yaad_v2.YaadV2/SetBookmarkV2",
+                      "rest_request_path": "/yaad/bookmark-v2",
+                      "request_data": {
+                        "@type": "type.googleapis.com/yaad_v2.SetBookmarkV2Request.RequestData",
+                        "token": "gasGkf8r"
+                      },
+                      "needs_auth": true
+                    }
+                  },
+                  "alignment": "RIGHT"
+                },
+                {
+                  "text": "باز کردن در صفحه جدید",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/add_circle_outline.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/add_circle_outline.png",
+                    "icon_name": "ADD_CIRCLE_OUTLINE",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "VIEW_POST",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.ViewPostPayload",
+                      "token": "gasGkf8r",
+                      "web_info": {
+                        "title": "اجاره مغازه",
+                        "open_new_tab": true
+                      }
+                    }
+                  },
+                  "alignment": "RIGHT"
+                }
+              ],
+              "banner": {}
+            },
+            "display_type": "LOAD_MENU_DISPLAY_TYPE_BOTTOM_SHEET"
+          }
+        },
+        "token": "gasGkf8r",
+        "should_indicate_seen_status": true,
+        "tracker_session_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gasGkf8r_N",
+        "layout_type": "GRID_ITEM"
+      },
+      "action_log": {
+        "server_side_info": {
+          "info": {
+            "@type": "type.googleapis.com/action_log.PostItemInfo",
+            "post_token": "gasGkf8r",
+            "index": 1,
+            "post_type": "SEARCH",
+            "list_type": "PAGE",
+            "source_page": "POST_LIST_PAGE",
+            "extra_data": {
+              "@type": "type.googleapis.com/action_log.PostItemInfo.SearchExtraData",
+              "jli": {
+                "category": {
+                  "value": "ROOT"
+                },
+                "sort": {
+                  "value": "sort_date"
+                },
+                "places": {
+                  "value": [
+                    "22"
+                  ]
+                },
+                "cities": [
+                  "22"
+                ]
+              },
+              "search_uid": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c",
+              "search_data": {
+                "form_data_json": "{\"data\":{\"category\":{\"str\":{\"value\":\"ROOT\"}}}}",
+                "server_payload_json": "{\"@type\":\"type.googleapis.com/widgets.SearchData.ServerPayload\",\"additional_form_data\":{\"data\":{\"sort\":{\"str\":{\"value\":\"sort_date\"}}}}}",
+                "cities": [
+                  "22"
+                ],
+                "query_input_type": "TEXT",
+                "user_selected_location": {
+                  "@type": "type.googleapis.com/widgets.UserSelectedLocation",
+                  "places": [
+                    {
+                      "place_id": "22"
+                    }
+                  ]
+                }
+              }
+            },
+            "sort_date": "2026-09-17T19:37:39.339305Z"
+          },
+          "item_type": {
+            "type": "POST_ITEM"
+          }
+        },
+        "enabled": true
+      }
+    },
+    {
+      "widget_type": "POST_ROW",
+      "data": {
+        "@type": "type.googleapis.com/widgets.PostRowData",
+        "title": "مبل چوبی ۸ نفره در حد نو",
+        "action": {
+          "type": "VIEW_POST",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.ViewPostPayload",
+            "token": "gasC0_jt",
+            "web_info": {
+              "title": "مبل چوبی ۸ نفره در حد نو",
+              "city_persian": "ساری"
+            },
+            "ad_instance_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gasC0_jt_N"
+          }
+        },
+        "image_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/99T-8MmvuNXAp3IDxcO9oQ/6f0dcb78-80db-45f2-99ab-5d480b53ce53.webp",
+        "bottom_description_text": "دقایقی پیش",
+        "has_chat": true,
+        "middle_description_text": "۳۲,۰۰۰,۰۰۰ تومان",
+        "has_divider": true,
+        "image_count": 4,
+        "top_description_text": "در حد نو",
+        "image_top_left_tag": {
+          "text": "۴",
+          "icon": {
+            "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/white_primary/v1/camera.png",
+            "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/white_primary/v1/camera.png",
+            "icon_name": "CAMERA",
+            "icon_color": "WHITE_PRIMARY"
+          },
+          "is_icon_left": true
+        },
+        "long_press_action": {
+          "type": "LOAD_MENU",
+          "payload": {
+            "@type": "type.googleapis.com/widgets.LoadMenuPayload",
+            "menu": {
+              "items": [
+                {
+                  "text": "نشان کردن",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/bookmark_border.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/bookmark_border.png",
+                    "icon_name": "BOOKMARK_BORDER",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "MAKE_NETWORK_CALL",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.MakeNetworkCallPayload",
+                      "grpc_request_path": "/yaad_v2.YaadV2/SetBookmarkV2",
+                      "rest_request_path": "/yaad/bookmark-v2",
+                      "request_data": {
+                        "@type": "type.googleapis.com/yaad_v2.SetBookmarkV2Request.RequestData",
+                        "token": "gasC0_jt"
+                      },
+                      "needs_auth": true
+                    }
+                  },
+                  "alignment": "RIGHT"
+                },
+                {
+                  "text": "باز کردن در صفحه جدید",
+                  "icon": {
+                    "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/add_circle_outline.png",
+                    "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/add_circle_outline.png",
+                    "icon_name": "ADD_CIRCLE_OUTLINE",
+                    "icon_color": "ICON_SECONDARY"
+                  },
+                  "action": {
+                    "type": "VIEW_POST",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.ViewPostPayload",
+                      "token": "gasC0_jt",
+                      "web_info": {
+                        "title": "مبل چوبی ۸ نفره در حد نو",
+                        "open_new_tab": true
+                      }
+                    }
+                  },
+                  "alignment": "RIGHT"
+                }
+              ],
+              "banner": {}
+            },
+            "display_type": "LOAD_MENU_DISPLAY_TYPE_BOTTOM_SHEET"
+          }
+        },
+        "token": "gasC0_jt",
+        "should_indicate_seen_status": true,
+        "tracker_session_id": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c_gasC0_jt_N",
+        "layout_type": "GRID_ITEM"
+      },
+      "action_log": {
+        "server_side_info": {
+          "info": {
+            "@type": "type.googleapis.com/action_log.PostItemInfo",
+            "post_token": "gasC0_jt",
+            "index": 2,
+            "post_type": "SEARCH",
+            "list_type": "PAGE",
+            "source_page": "POST_LIST_PAGE",
+            "extra_data": {
+              "@type": "type.googleapis.com/action_log.PostItemInfo.SearchExtraData",
+              "jli": {
+                "category": {
+                  "value": "ROOT"
+                },
+                "sort": {
+                  "value": "sort_date"
+                },
+                "places": {
+                  "value": [
+                    "22"
+                  ]
+                },
+                "cities": [
+                  "22"
+                ]
+              },
+              "search_uid": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c",
+              "search_data": {
+                "form_data_json": "{\"data\":{\"category\":{\"str\":{\"value\":\"ROOT\"}}}}",
+                "server_payload_json": "{\"@type\":\"type.googleapis.com/widgets.SearchData.ServerPayload\",\"additional_form_data\":{\"data\":{\"sort\":{\"str\":{\"value\":\"sort_date\"}}}}}",
+                "cities": [
+                  "22"
+                ],
+                "query_input_type": "TEXT",
+                "user_selected_location": {
+                  "@type": "type.googleapis.com/widgets.UserSelectedLocation",
+                  "places": [
+                    {
+                      "place_id": "22"
+                    }
+                  ]
+                }
+              }
+            },
+            "sort_date": "2026-09-17T19:35:34.512905Z"
+          },
+          "item_type": {
+            "type": "POST_ITEM"
+          }
+        },
+        "enabled": true
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "data": {
+      "@type": "type.googleapis.com/post_list.PaginationData",
+      "last_post_date": "2026-09-17T19:02:24.352990Z",
+      "page": 1,
+      "layer_page": 1,
+      "search_uid": "ae7e8cc0-738e-4680-b8bd-8c25ee7dfb4c",
+      "cumulative_widgets_count": 25,
+      "viewed_tokens": "H4sIAAAAAAAE/xzO0W6CMBgF4BfqklLIwi7HSrapkQSoBm9IifSXIkhbVOTpzd+7L+dcnAPS/Qp7uRFEr2KL+KG1nj1ENx4JSPiHoI0wMToKVwJSFS/LD5gwPlWjx5ot3wRkPJ+M2xKQHXOf6Qaru6Yq9eDjtPPQyYcfNWX9UJgYvXDcOifiaUMCchEViyhWg6btnwcPcty6Zq5P/Z+h1Pscq5Z/sYaAdBmfi+YdAAD///a8R5TXAAAA",
+      "search_bookmark_info": {
+        "search_hash": "9f16d5be6a31f98066cf89da6bcbacab",
+        "bookmark_state": {},
+        "alert_state": {}
+      },
+      "first_page_viewed_at": "2026-09-17T19:41:15.774022285Z",
+      "filters_hash": "nxbVvmox+YBmz4naa8usqw=="
+    },
+    "is_first_page": true
+  }
+}

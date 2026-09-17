@@ -25,6 +25,11 @@ DATABASES = {
     'default': postgres_config(require_env=True),
 }
 
+# CRAWLING
+# ------------------------------------------------------------------------------
+# Every worker must share one token bucket, so production defaults to Redis.
+CRAWL_RATE_LIMIT_BACKEND = env_str('CRAWL_RATE_LIMIT_BACKEND', 'redis')
+
 # CACHES
 # ------------------------------------------------------------------------------
 # Django's built-in Redis backend keeps DRF throttling state shared across

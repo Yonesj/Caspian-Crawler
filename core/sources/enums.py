@@ -1,8 +1,8 @@
 """Source-agnostic vocabulary shared by the location and listing domains.
 
-This module intentionally holds no models.  Crawl adapters (added in a later
-milestone) live in this package too, so that "which sources exist" is defined
-in exactly one place instead of being duplicated as string literals.
+This module intentionally holds no models and imports nothing heavy, so
+settings, domain models and crawler code can all reference the same values
+without pulling the HTTP stack into the Django app registry.
 """
 
 from django.db import models

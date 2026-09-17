@@ -1,0 +1,734 @@
+{
+  "sections": [
+    {
+      "section_name": "BREADCRUMB",
+      "widgets": [
+        {
+          "widget_type": "BREADCRUMB",
+          "data": {
+            "@type": "type.googleapis.com/widgets.BreadcrumbData",
+            "parent_items": [
+              {
+                "title": "املاک",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "real-estate"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              },
+              {
+                "title": "اجارهٔ دفتر اداری و تجاری",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "commercial-rent"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              },
+              {
+                "title": "اجارهٔ مغازه و غرفه",
+                "action": {
+                  "type": "OPEN_POSTLIST_PAGE_GRPC",
+                  "payload": {
+                    "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                    "search_data": {
+                      "form_data": {
+                        "data": {
+                          "category": {
+                            "str": {
+                              "value": "shop-rent"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "source_view": "CATEGORY_BREAD_CRUMB",
+                    "source_view_str": "CATEGORY_BREAD_CRUMB"
+                  }
+                }
+              }
+            ],
+            "current_page_title": "اجاره مغازه",
+            "padded": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "TITLE",
+      "widgets": [
+        {
+          "widget_type": "LEGEND_TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.LegendTitleRowData",
+            "title": "اجاره مغازه",
+            "high_level_heading": true,
+            "padding": "NO_PADDING"
+          }
+        },
+        {
+          "widget_type": "EXPANDABLE_SECTION",
+          "data": {
+            "@type": "type.googleapis.com/widgets.ExpandableSectionData",
+            "widget_list": [
+              {
+                "widget_type": "DESCRIPTION_ROW",
+                "data": {
+                  "@type": "type.googleapis.com/widgets.DescriptionRowData",
+                  "text": "انتشار آگهی: ۲۶ شهریور ۱۴۰۵، ۲۳:۰۷\nآخرین به‌روز‌رسانی: ۲۶ شهریور ۱۴۰۵، ۲۳:۰۷",
+                  "is_primary": true,
+                  "small": true,
+                  "text_alignment": "RIGHT"
+                }
+              }
+            ],
+            "title": "دقایقی پیش در ساری، خ ولیعصر",
+            "icon": {}
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "زنگ خطرهای قبل از معامله",
+            "action": {
+              "type": "OPEN_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenPagePayload",
+                "request_http_method": "POST",
+                "request_data": {
+                  "@type": "type.googleapis.com/post_api_v2.GetFraudAlertPageRequest.Data",
+                  "category": "shop-rent"
+                },
+                "specification": {
+                  "@type": "type.googleapis.com/widgets.OpenPagePayload.SimplePageSpecification",
+                  "navigation_button": "BACK"
+                },
+                "is_modal": true,
+                "rest_request_path": "/v8/postview/fraud-alert",
+                "grpc_request_path": "/post_api_v2.PostApi/GetFraudAlertPage"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/warning.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/warning.png",
+              "icon_name": "WARNING",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.PostWarningInfo",
+                "post_token": "gasGkf8r"
+              },
+              "item_type": {
+                "type": "POST_WARNING"
+              }
+            },
+            "enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "DESCRIPTION",
+      "widgets": [
+        {
+          "widget_type": "TITLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.TitleRowData",
+            "text": "توضیحات",
+            "text_color": "TEXT_PRIMARY",
+            "text_type": "SECONDARY"
+          }
+        },
+        {
+          "widget_type": "DESCRIPTION_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.DescriptionRowData",
+            "text": "عرض ۳ طول ۴ متر دارای برق",
+            "is_primary": true,
+            "text_alignment": "RIGHT"
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "IMAGE",
+      "widgets": [
+        {
+          "widget_type": "IMAGE_CAROUSEL",
+          "data": {
+            "@type": "type.googleapis.com/widgets.ImageCarouselData",
+            "items": [
+              {
+                "image": {
+                  "url": "https://s100.divarcdn.com/static/photo/neda/webp_post/M7fwsw6bYBboJIO0ql8pSg/d2a7ac7b-9971-458b-901a-5868583f3941.webp",
+                  "alt": "اجاره مغازه|اجارهٔ مغازه و غرفه|ساری, |دیوار",
+                  "thumbnail_url": "https://s100.divarcdn.com/static/photo/neda/webp_thumbnail/OYkef2zkqZoyfVXEN6EeAg/d2a7ac7b-9971-458b-901a-5868583f3941.webp"
+                }
+              }
+            ],
+            "image_aspect_ratio": {
+              "dynamic_aspect_ratio": {
+                "height": 3,
+                "width": 4
+              }
+            },
+            "has_preview": true,
+            "show_tooltip": true,
+            "tooltip_data": {
+              "icon": {
+                "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/white_primary/v1/fullscreen.png",
+                "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/white_primary/v1/fullscreen.png",
+                "icon_name": "FULLSCREEN",
+                "icon_color": "WHITE_PRIMARY"
+              },
+              "text": "۱"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "LIST_DATA",
+      "widgets": [
+        {
+          "widget_type": "GROUP_INFO_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.GroupInfoRow",
+            "items": [
+              {
+                "title": "متراژ",
+                "value": "۱۲"
+              },
+              {
+                "title": "ساخت",
+                "value": "۱۴۰۵"
+              },
+              {
+                "title": "اتاق",
+                "value": "بدون اتاق"
+              }
+            ],
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "تصویر‌ها برای همین ملک است؟",
+            "value": "بله",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "ودیعه",
+            "value": "‏۳۰,۰۰۰,۰۰۰ تومان",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "اجارهٔ ماهانه",
+            "value": "‏۶۰,۰۰۰,۰۰۰ تومان",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "UNEXPANDABLE_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.UnexpandableRowData",
+            "title": "ودیعه و اجاره",
+            "value": "غیر قابل تبدیل",
+            "has_divider": true
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "سایر ویژگی‌ها و امکانات",
+            "action": {
+              "type": "LOAD_MODAL_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.LoadModalPagePayload",
+                "modal_page": {
+                  "title": "ویژگی‌ها و امکانات",
+                  "widget_list": [
+                    {
+                      "widget_type": "DESCRIPTION_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.DescriptionRowData",
+                        "text": "انشعابات",
+                        "is_primary": true,
+                        "expandable": true,
+                        "padded": true,
+                        "preview_max_line": 4,
+                        "text_alignment": "RIGHT"
+                      }
+                    },
+                    {
+                      "widget_type": "WRAPPER_ROW",
+                      "data": {
+                        "@type": "type.googleapis.com/widgets.WrapperRowData",
+                        "chip_list": {
+                          "chips": [
+                            {
+                              "text": "برق",
+                              "type": "ACTION",
+                              "small": true
+                            }
+                          ]
+                        },
+                        "padded": true
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "has_divider": true,
+            "icon": {},
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z",
+            "fullwidth": true
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.ViewPostFeaturesInfo",
+                "post_token": "gasGkf8r"
+              },
+              "item_type": {
+                "type": "VIEW_POST_FEATURES"
+              }
+            },
+            "enabled": true
+          }
+        },
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "بررسی و کارشناسی",
+            "action": {
+              "type": "OPEN_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenPagePayload",
+                "request_http_method": "POST",
+                "request_data": {
+                  "@type": "type.googleapis.com/service_providers.GetServiceProvidersPageRequest.RequestData",
+                  "source_v2": "DEMAND_POST",
+                  "filter": {
+                    "service_types": [
+                      "REPORT_INSPECTION"
+                    ],
+                    "city_id": 22,
+                    "category": "shop-rent",
+                    "post_token": "gasGkf8r",
+                    "touchpoint": "DEMAND_POST"
+                  },
+                  "action_data_builder": {
+                    "conversation_id": "gasGkf8r",
+                    "post_token": "gasGkf8r",
+                    "touchpoint": "DEMAND_POST",
+                    "source": "DEMAND_POST",
+                    "lead_source": "DEMAND"
+                  },
+                  "display_data": {
+                    "page_title": "بررسی و کارشناسی"
+                  },
+                  "trace_id": "b93f7e2f-f56d-4fbe-b043-e5ff1d305065",
+                  "source": "DEMAND_POST",
+                  "lead_source": "DEMAND"
+                },
+                "specification": {
+                  "@type": "type.googleapis.com/widgets.OpenPagePayload.SimplePageSpecification"
+                },
+                "is_modal": true,
+                "rest_request_path": "/v8/open-platform/service-providers",
+                "grpc_request_path": "/service_providers.ServiceProviders/GetServiceProvidersPage"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/article-magnifier.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/article-magnifier.png",
+              "icon_name": "ARTICLE_MAGNIFIER",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "has_arrow": true,
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "TAGS",
+      "widgets": [
+        {
+          "widget_type": "WRAPPER_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.WrapperRowData",
+            "chip_list": {
+              "chips": [
+                {
+                  "text": "اجارهٔ مغازه و غرفه",
+                  "type": "ACTION",
+                  "action": {
+                    "type": "OPEN_POSTLIST_PAGE_GRPC",
+                    "payload": {
+                      "@type": "type.googleapis.com/widgets.OpenPostListPageGRPCPayload",
+                      "search_data": {
+                        "form_data": {
+                          "data": {
+                            "category": {
+                              "str": {
+                                "value": "shop-rent"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "source_view": "CATEGORY_BREAD_CRUMB",
+                      "source_view_str": "CATEGORY_BREAD_CRUMB"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "MAP",
+      "widgets": [
+        {
+          "widget_type": "MAP_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.MapRowData",
+            "location": {
+              "exact_data": {
+                "point": {
+                  "latitude": 36.555215399909,
+                  "longitude": 53.018446541384
+                }
+              }
+            },
+            "image_url": "https://mapimage.divarcdn.com/v8/mapimage?encrypted_data=MTIzNDU2Nzg5MTIzXGEDSt1PUK_uQsNM5VVyWflLEIBnijZTk4zJXvfsVP33Cg=="
+          },
+          "action_log": {
+            "server_side_info": {
+              "info": {
+                "@type": "type.googleapis.com/action_log.MapInfo",
+                "post_token": "gasGkf8r"
+              },
+              "item_type": {
+                "type": "MAP"
+              }
+            },
+            "enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "NOTE",
+      "widgets": [
+        {
+          "widget_type": "NOTE",
+          "data": {
+            "@type": "type.googleapis.com/widgets.NoteData",
+            "title": "یادداشت من",
+            "button_title": "ویرایش یادداشت",
+            "post_token": "gasGkf8r",
+            "icon_button": {
+              "icon": {
+                "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/more_vert.png",
+                "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/more_vert.png",
+                "icon_name": "MORE_VERT",
+                "icon_color": "ICON_SECONDARY"
+              },
+              "action": {
+                "type": "LOAD_MENU",
+                "payload": {
+                  "@type": "type.googleapis.com/widgets.LoadMenuPayload",
+                  "menu": {
+                    "items": [
+                      {
+                        "text": "ویرایش یادداشت",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/edit.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/edit.png",
+                          "icon_name": "EDIT",
+                          "icon_color": "ICON_SECONDARY"
+                        },
+                        "action": {
+                          "type": "NOTE",
+                          "payload": {
+                            "@type": "type.googleapis.com/widgets.NotePayload",
+                            "post_token": "gasGkf8r",
+                            "max_character_count": 256
+                          }
+                        },
+                        "alignment": "RIGHT"
+                      },
+                      {
+                        "text": "حذف یادداشت",
+                        "icon": {
+                          "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_primary/v1/trash_o.png",
+                          "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_primary/v1/trash_o.png",
+                          "icon_name": "TRASH_O",
+                          "icon_color": "ICON_PRIMARY"
+                        },
+                        "action": {
+                          "type": "MAKE_NETWORK_CALL",
+                          "payload": {
+                            "@type": "type.googleapis.com/widgets.MakeNetworkCallPayload",
+                            "grpc_request_path": "/yaad_v2.YaadV2/DeleteNoteV2",
+                            "rest_request_path": "/yaad/delete-note-v2",
+                            "request_data": {
+                              "@type": "type.googleapis.com/yaad_v2.DeleteNoteV2Request.RequestData",
+                              "token": "gasGkf8r"
+                            },
+                            "needs_auth": true
+                          }
+                        },
+                        "alignment": "RIGHT",
+                        "state": "STATE_NEGATIVE"
+                      }
+                    ],
+                    "banner": {}
+                  },
+                  "display_type": "LOAD_MENU_DISPLAY_TYPE_BOTTOM_SHEET"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_name": "STATIC",
+      "widgets": [
+        {
+          "widget_type": "SELECTOR_ROW",
+          "data": {
+            "@type": "type.googleapis.com/widgets.SelectorRowData",
+            "title": "گزارش آگهی",
+            "action": {
+              "type": "OPEN_FORM_PAGE",
+              "payload": {
+                "@type": "type.googleapis.com/widgets.OpenFormPagePayload",
+                "grpc_servicer": "/post_quality.PostQualityFeedback/GetFeedbackForm",
+                "request_data": {
+                  "@type": "type.googleapis.com/post_quality.GetFeedbackFormRequest.RequestData",
+                  "post_token": "gasGkf8r"
+                },
+                "rest_request_path": "/v8/post-quality/feedback-form"
+              }
+            },
+            "has_divider": true,
+            "icon": {
+              "image_url_dark": "https://s100.divarcdn.com/static/imgs/widget-icons/dark/icon_secondary/v1/report.png",
+              "image_url_light": "https://s100.divarcdn.com/static/imgs/widget-icons/light/icon_secondary/v1/report.png",
+              "icon_name": "REPORT",
+              "icon_color": "ICON_SECONDARY"
+            },
+            "last_notification_date": "0001-01-01T00:00:00Z"
+          }
+        }
+      ]
+    }
+  ],
+  "share": {
+    "title": "اجاره مغازه",
+    "web_url": "https://divar.ir/v/gasGkf8r"
+  },
+  "seo": {
+    "title": "اجاره مغازه در ساری - ۲۶ شهریور ۱۴۰۵",
+    "description": "آگهی اجاره مغازه در دیوار ساری",
+    "android_package_name": "ir.divar",
+    "android_app_url": "android-app://ir.divar/http/v/اجاره مغازه/gasGkf8r/",
+    "web_info": {
+      "title": "اجاره مغازه",
+      "city_persian": "ساری",
+      "category_slug_persian": "اجارهٔ مغازه و غرفه"
+    },
+    "unavailable_after": "2026-10-18T23:07:39.340067",
+    "bread_crumb": [
+      {
+        "name": "اجارهٔ مغازه و غرفه",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              },
+              "category": {
+                "str": {
+                  "value": "shop-rent"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "اجارهٔ دفتر اداری و تجاری",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "category": {
+                "str": {
+                  "value": "commercial-rent"
+                }
+              },
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "املاک",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              },
+              "category": {
+                "str": {
+                  "value": "real-estate"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "0",
+        "search_data": {
+          "form_data": {
+            "data": {
+              "districts": {
+                "repeated_string": {
+                  "value": [
+                    "0"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "22",
+        "search_data": {
+          "form_data": {}
+        }
+      },
+      {
+        "name": "دیوار"
+      }
+    ],
+    "post_seo_schema": {
+      "@context": "https://schema.org",
+      "url": "https://divar.ir/v/اجاره-مغازه/gasGkf8r",
+      "image": "https://s100.divarcdn.com/static/photo/neda/webp_post/M7fwsw6bYBboJIO0ql8pSg/d2a7ac7b-9971-458b-901a-5868583f3941.webp",
+      "@type": "Product",
+      "offers": {
+        "priceCurrency": "IRR",
+        "price": "0",
+        "@type": "Offer"
+      },
+      "web_info": {
+        "title": "اجاره مغازه",
+        "city_persian": "ساری",
+        "district_persian": "",
+        "category_slug_persian": "اجارهٔ مغازه و غرفه"
+      },
+      "name": "اجاره مغازه",
+      "description": "عرض ۳ طول ۴ متر دارای برق",
+      "category": "shop-rent"
+    },
+    "image_url": "https://s100.divarcdn.com/static/photo/neda/post/LSV0UOIf5Oo6Drygpd1Xtw/d2a7ac7b-9971-458b-901a-5868583f3941.jpg"
+  },
+  "contact": {
+    "chat_enabled": true,
+    "action_log": {
+      "server_side_info": {
+        "info": {
+          "@type": "type.googleapis.com/action_log.ContactInfoInfo",
+          "post_token": "gasGkf8r",
+          "method_name": "GetContactWeb",
+          "contact_uuid": "3dac04d1-594e-4984-9a79-fe219acc5c97"
+        },
+        "item_type": {
+          "type": "CONTACT_INFO"
+        }
+      },
+      "enabled": true
+    },
+    "contact_uuid": "3dac04d1-594e-4984-9a79-fe219acc5c97"
+  },
+  "city": {
+    "city_id": "22",
+    "name": "ساری",
+    "parent_id": "893",
+    "second_slug": "sari"
+  }
+}

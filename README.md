@@ -14,7 +14,7 @@ deliberately traded for a sound, well-tested architecture.
 | --- | --- | --- |
 | 0 | Foundation: settings, env-driven DB, `accounts`, schema docs, test harness | done |
 | 1 | Domain data: provinces/cities/regions, listings, status history | done |
-| 2 | Source integrations: Divar + Sheypoor adapters, retry/backoff, rate limits | planned |
+| 2 | Source integrations: Divar + Sheypoor adapters, retry/backoff, rate limits | done |
 | 3 | Normalization: Persian digits, Toman/Rial, Jalali dates, locations | planned |
 | 4 | Crawl pipeline: jobs, Celery worker + beat, observability | planned |
 | 5 | Deduplication and listing lifecycle | planned |
@@ -80,9 +80,18 @@ code runs against any PostgreSQL host.
 | `DATABASE_URL` | Full connection URL; alternative to the `POSTGRES_*` set |
 | `POSTGRES_DB` / `_USER` / `_PASSWORD` / `_HOST` / `_PORT` | Individual connection settings |
 | `POSTGRES_CONN_MAX_AGE` | Persistent connection lifetime in seconds |
-| `REDIS_URL` | Celery broker/result backend and shared cache |
+| `REDIS_URL` | Shared Redis: rate-limit buckets now, Celery broker/result backend later |
+| `CRAWL_USER_AGENT` | User agent sent to crawl sources; production should carry a contact |
+| `CRAWL_RATE_LIMIT_BACKEND` | `memory` (default) or `redis` (default in production) |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated origins (production) |
 | `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS` | Opt-in TLS hardening (production) |
+
+Per-source crawling policy is overridable without a deploy, with
+`CRAWL_<SOURCE>_<FIELD>` where source is `DIVAR` or `SHEYPOOR` and field is one
+of `REQUESTS_PER_SECOND`, `BURST`, `TIMEOUT_SECONDS`, `CONNECT_TIMEOUT_SECONDS`,
+`MAX_ATTEMPTS`, `BACKOFF_BASE_SECONDS`, `BACKOFF_FACTOR`, `BACKOFF_MAX_SECONDS`,
+`MAX_RETRY_AFTER_SECONDS`, `MAX_RESPONSE_BYTES`, `ENABLED` — for example
+`CRAWL_DIVAR_REQUESTS_PER_SECOND=0.25`.
 
 Values may be quoted or unquoted; surrounding quotes are stripped. Never commit
 a populated `.env`.
@@ -90,8 +99,9 @@ a populated `.env`.
 ## Running tests
 
 ```bash
-uv run pytest              # default: fast, no network, no browser
-uv run pytest -m network   # refreshes parsers against live sources (opt-in)
+uv run pytest               # default: fast, offline, no browser
+uv run pytest tests/sources # crawler layer only (no database needed)
+uv run pytest -m network    # opt-in checks against the live sources
 uv run pytest -m playwright
 ```
 
@@ -104,11 +114,30 @@ pytest-django create `test_<database>`. Without it, only non-database tests run.
 
 Covered so far: authentication endpoints, schema generation, the location
 hierarchy and its integrity constraints, the `seed_locations` command
-(idempotency, dry-run, malformed input) and the listing model's identity,
-price, ordering and status-history rules.
+(idempotency, dry-run, malformed input), the listing model's identity, price,
+ordering and status-history rules, and the whole crawler layer — retry/backoff
+and `Retry-After` behaviour, both rate limiters, and both source parsers.
 
-Parsers are tested against committed fixtures captured from each source; no
-default test performs live requests.
+Parsers and the transport are tested against committed fixtures and a mocked
+HTTP transport, so no default test performs a live request; `-m network` runs
+the opt-in smoke test that re-checks both sources end to end.
+
+### Refreshing source fixtures
+
+Parser fixtures under `tests/sources/fixtures/` are captured from the live
+sources and trimmed to a few listings each, keeping the source's exact structure
+(keys, nesting and escaping). The capture command re-fetches, trims and — before
+writing anything — asserts that the trimmed payload parses to exactly the same
+data as the untrimmed capture:
+
+```bash
+uv run python manage.py capture_source_fixtures --source divar --keep-raw
+uv run python manage.py capture_source_fixtures --source sheypoor --keep-raw
+```
+
+`--trim N` controls how many listings are kept, `--scope` overrides the place
+id/slug, `--detail-index` picks which listing is also captured in detail, and
+untrimmed copies go to the gitignored `var/fixtures-raw/`.
 
 ## Project layout
 
@@ -117,7 +146,7 @@ config/settings/     # split settings: base / development / test / production
 core/accounts/       # project user model and JWT endpoints
 core/locations/      # province/city/region reference data + seed command
 core/listings/       # normalized listing, images, status history
-core/sources/        # shared source vocabulary and (later) crawl adapters
+core/sources/        # source vocabulary, adapters, HTTP transport, rate limiting
 tests/               # unit, integration and fixture-based parser tests
 ```
 
@@ -163,17 +192,54 @@ Only publicly accessible data is targeted. No authentication bypass, CAPTCHA
 bypass, anti-bot evasion or private-data scraping is implemented, and each
 source is handled according to its published restrictions.
 
-| Source | Access notes (verified during reconnaissance) | Approach |
+| Source | Access notes (verified live) | Approach |
 | --- | --- | --- |
-| Divar | `divar.ir/robots.txt` and `api.divar.ir/robots.txt` allow all paths. The public web API used by divar.ir itself returns JSON: `POST /v8/postlist/w/search` (25 listings per page, cursor pagination) and `GET /v8/posts-v2/web/<token>` (detail). City ids are resolved from the server-rendered listing page. | HTTP/JSON adapter, no browser |
-| Sheypoor | `robots.txt` allows listing paths and `page_num` pagination; it disallows `/search`, `/session`, `/pro` and bare query strings, which the adapter avoids. Listings are embedded in the server-rendered HTML; a public `/api/v10.0.0/...` JSON API also exists. | HTTP adapter + HTML parsing, no browser |
+| Divar | `divar.ir/robots.txt` and `api.divar.ir/robots.txt` allow all paths. The JSON API divar.ir's own web client uses: `POST /v8/postlist/w/search` returns 25 listings per page and `GET /v8/posts-v2/web/<token>` returns one detail document. Pagination is cursor-based: the response's `pagination.data` is sent back verbatim as `pagination_data` to obtain the next page, and crawling stops when `has_next_page` is false (verified: pages 1-3 share no listings). `/v5/*` answers 403 and is not used. Detail pages carry `seo.unavailable_after`, which later milestones read as an availability signal. | HTTP/JSON adapter, no browser |
+| Sheypoor | `robots.txt` allows listing paths and `page_num` pagination and disallows `/search`, `/session`, `/pro` and bare query strings, all of which the adapter avoids: it only requests `/s/<slug>` and `?page_num=N`. Listings are embedded in the server-rendered Next.js React Flight stream (`self.__next_f.push` chunks, `<hex-id>:<payload>` rows with `"$id"` references), which the adapter rebuilds and resolves. Detail URLs are slugged — an id-only URL 404s — so `fetch_detail` requires the URL the listing was found at. No masked or private contact data is extracted. | HTTP adapter + SSR payload parsing, no browser |
+
+Neither adapter sends credentials, bypasses access controls or extracts contact
+details. Requests are paced by the configured per-source bucket, every HTTP
+crawler call has a timeout, and permanent failures (401/403/404) are never
+retried — see "Fault tolerance and pacing" below.
+
+## Crawler reliability
+
+- **Timeouts.** Every request carries a total timeout and a separate connect
+  timeout (Divar 20 s / 5 s, Sheypoor 30 s / 5 s by default), both configurable.
+- **Bounded retries with backoff.** At most `max_attempts` (4 by default) per
+  request. Retryable: connection errors, timeouts, `408`, `425`, `429` and every
+  `5xx`. Never retried: `401`, `403`, `404` and other `4xx`, nor a response that
+  exceeds `MAX_RESPONSE_BYTES`. Backoff is exponential
+  (`base * factor^(n-1)`, capped) with jitter.
+- **`429`/`Retry-After`.** A `Retry-After` header (delta seconds or HTTP date)
+  replaces the computed backoff; if it exceeds `MAX_RETRY_AFTER_SECONDS` the
+  request fails loudly instead of sleeping for hours.
+- **Rate limiting.** A token bucket per source (`REQUESTS_PER_SECOND` refilled,
+  `BURST` capacity) that every attempt — including retries — passes through.
+  Defaults are deliberately slow: one request every 2 s to Divar, every 3 s to
+  Sheypoor. `InMemoryRateLimiter` is per process; `RedisRateLimiter` shares one
+  bucket across workers and is the production default.
+- **Observability.** Attempts, retries and give-ups are logged on the
+  `north_estate.crawl` logger, and backoff sleeps are emitted as warnings so a
+  crawl report can explain a slow run.
+- **Testability.** Transport tests inject the clock and RNG, so retry, jitter
+  and `Retry-After` behaviour is asserted without sleeping or touching a network.
 
 ## Key architectural decisions
 
-- **HTTP-first crawling, Playwright as an optional fallback.** Both current
-  sources expose machine-readable data, so the default path is fast and
-  deterministic. A browser fetcher is available for sources that only render
-  client-side and is never loaded unless used.
+- **HTTP-first crawling with a browser seam.** Both sources expose
+  machine-readable data, so the default path is fast and deterministic and no
+  adapter needs a browser today. The `Fetcher` protocol in
+  `core/sources/transport.py` is the seam a Playwright-backed fetcher can slot
+  into for sources that only render client-side, without touching adapters.
+- **Fault tolerance lives in one transport, not in each adapter.** Timeouts,
+  bounded retries, backoff, `Retry-After`, the response-size guard and pacing
+  are written and tested once, so a new source inherits them by construction.
+- **Adapters return source-shaped DTOs, never database rows.** Prices and dates
+  stay exactly as the source printed them (`"۶,۹۵۰,۰۰۰,۰۰۰ تومان"`, Jalali
+  dates); converting them is the normalization layer's job. This keeps parsing
+  and semantic conversion independently testable and keeps crawler code out of
+  the domain models.
 - **Celery + Redis for background work.** Crawling never happens inside a
   request; jobs have an observable lifecycle and a retry policy, and Redis also
   backs shared rate-limiting and throttle state across workers.

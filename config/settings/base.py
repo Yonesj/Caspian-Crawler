@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import __path__ as drf_path
 
+from core.sources.config import build_policies
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(dotenv_path=str(BASE_DIR / ".env"))
@@ -141,6 +143,7 @@ THIRD_PARTY_APPS = [
 ]
 LOCAL_APPS = [
     'core.accounts',
+    'core.sources',
     'core.locations',
     'core.listings',
 ]
@@ -239,4 +242,18 @@ SIMPLE_JWT = {
 # ------------------------------------------------------------------------------
 # Normalised so a quoted or slash-less value cannot silently break the route.
 ADMIN_URL = (env_str("DJANGO_ADMIN_URL", "admin/") or "admin/").strip("/") + "/"
+
+# CRAWLING
+# ------------------------------------------------------------------------------
+# Politeness lives in configuration, not in crawler code: every value below is
+# overridable per source with CRAWL_<SOURCE>_<FIELD> (see core/sources/config.py).
+CRAWL_USER_AGENT = env_str(
+    "CRAWL_USER_AGENT",
+    "NorthEstate/0.1 (research crawler; contact the repository owner)",
+)
+CRAWL_POLICIES = build_policies(env_str, env_bool)
+
+# Shared Redis: rate-limit buckets now, Celery broker and cache later.
+REDIS_URL = redis_url()
+CRAWL_RATE_LIMIT_BACKEND = env_str("CRAWL_RATE_LIMIT_BACKEND", "memory")
 

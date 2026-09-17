@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-09-17T19:41:15+00:00",
+  "source": "divar",
+  "scope": "22",
+  "files": {
+    "divar_list_page1.json": {
+      "url": "https://api.divar.ir/v8/postlist/w/search",
+      "listings": 4
+    },
+    "divar_detail_gasGkf8r.json": {
+      "url": "https://api.divar.ir/v8/posts-v2/web/gasGkf8r",
+      "listing": "gasGkf8r"
+    }
+  }
+}

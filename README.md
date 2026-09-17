@@ -17,7 +17,7 @@ deliberately traded for a sound, well-tested architecture.
 | 2 | Source integrations: Divar + Sheypoor adapters, retry/backoff, rate limits | done |
 | 3 | Normalization: Persian digits, Toman/Rial, Jalali dates, locations | done |
 | 4 | Crawl pipeline: jobs, Celery worker + beat, observability | done |
-| 5 | Deduplication and listing lifecycle | planned |
+| 5 | Deduplication and listing lifecycle | done |
 | 6 | API endpoints, Dockerfile, docker-compose, full README | planned |
 
 ## Requirements
@@ -90,6 +90,14 @@ code runs against any PostgreSQL host.
 | `CELERY_TASK_TIME_LIMIT` / `CELERY_TASK_SOFT_TIME_LIMIT` | Per-crawl hard/soft limit in seconds (default 1800 / 1500) |
 | `CELERY_BEAT_ENABLED` | `true` registers the periodic dispatch entry in Celery beat (default off) |
 | `CRAWL_SCHEDULE_TICK_SECONDS` | How often beat asks for due schedules, in seconds (default 60) |
+| `LISTING_SWEEP_ENABLED` | `false` disables the periodic lifecycle sweep (default on) |
+| `LISTING_SWEEP_INTERVAL_SECONDS` | How often beat runs the sweep (default 3600) |
+| `LISTING_STALE_AFTER_MISSES` | Misses in a row before a listing is `stale` (default 1) |
+| `LISTING_DELISTED_AFTER_MISSES` | Misses in a row before it is `delisted` (default 3) |
+| `LISTING_SWEEP_MIN_DETAILS` | Details a crawl must have persisted to count as evidence (default 1) |
+| `DEDUP_CANDIDATES_ENABLED` | `false` disables the periodic candidate detection (default on) |
+| `DEDUP_CANDIDATES_INTERVAL_SECONDS` | How often beat runs detection (default 86400) |
+| `DEDUP_MAX_LISTINGS_PER_BUCKET` | Listings compared per `(transaction, city)` per run (default 500) |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated origins (production) |
 | `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS` | Opt-in TLS hardening (production) |
 
@@ -131,8 +139,14 @@ extraction and location resolution, including end-to-end runs over the committed
 fixtures, and the crawl pipeline: scope resolution, the idempotent
 `(source, source_id)` upsert, partially failed crawls, the Celery task's
 terminal states and redelivery no-op, the beat dispatcher and the operator
-commands. Tasks run eagerly against an in-memory broker in tests, so the
-default suite needs no Redis and no worker.
+commands. The listing lifecycle is covered by the miss policy itself (one
+miss marks `stale`, three mark `delisted`, `hidden` rows and out-of-scope
+listings are untouched, a re-run never double-counts a miss, a dry run writes
+nothing) and duplicate handling by the pure matcher (blockers, tolerances,
+weighted signals, the score threshold) plus the review service (idempotent
+detection, sticky human verdicts, `duplicate_of` linking, and the guarantee that
+nothing is merged or deleted). Tasks run eagerly against an in-memory broker in
+tests, so the default suite needs no Redis and no worker.
 
 Parsers and the transport are tested against committed fixtures and a mocked
 HTTP transport, so no default test performs a live request; `-m network` runs
@@ -211,6 +225,7 @@ core/accounts/       # project user model and JWT endpoints
 core/locations/      # province/city/region reference data + seed command
 core/listings/       # normalized listing, images, status history
 core/crawling/       # crawl jobs, scope resolution, persistence, Celery tasks
+core/dedup/          # cross-source duplicate candidates, pure matcher, review
 core/normalization/  # source DTOs -> normalized listings (pure, DB-free)
 core/sources/        # source vocabulary, adapters, HTTP transport, rate limiting
 tests/               # unit, integration and fixture-based parser tests
@@ -255,8 +270,10 @@ the raw source location text alongside the resolved hierarchy, and the last
 source payload in `raw_data` for diagnostics. Availability is modelled as a
 status column (`active` / `stale` / `delisted` / `hidden`) with an append-only
 `ListingStatusEvent` log, so a listing that vanishes from a crawl is marked, not
-deleted. Cross-source duplicate detection is intentionally *not* part of this
-layer; it arrives in a later milestone.
+deleted; `consecutive_misses` counts the sweeps that did not see it. A reviewed
+cross-source duplicate is recorded in `duplicate_of`, a nullable self-pointer
+that links a discarded copy to the listing it duplicates. The link is metadata
+only: neither row is merged, rewritten or removed.
 
 ## Sources
 
@@ -343,8 +360,8 @@ queued.
 `(source, source_id)` -- the source's own identifier, never the URL. A listing
 seen again has its data refreshed and `last_seen_at` advanced, and one that
 reappears after being `stale`/`delisted` is reactivated with a status event.
-Cross-source duplicate candidates and the staleness sweep belong to the next
-milestone; nothing here deletes a listing.
+Cross-source duplicate candidates and the lifecycle sweep run next to this
+pipeline rather than inside it (see below); nothing here deletes a listing.
 
 **Periodic crawls are opt-in twice over.** Beat only has the dispatch entry
 when `CELERY_BEAT_ENABLED=true`, and the dispatcher only acts on
@@ -353,6 +370,78 @@ fresh deployment never starts loading third-party sites on its own. The
 dispatcher itself performs no HTTP; it creates jobs and lets workers crawl.
 Note that beat and the worker are separate processes with separate
 environments -- the flag belongs on the beat process.
+
+## Listing lifecycle
+
+A listing that stops appearing is aged, never deleted:
+
+```bash
+# report what ageing would happen, without writing
+uv run python manage.py sweep_listings --dry-run
+uv run python manage.py sweep_listings --job-id 12 --limit 5
+```
+
+**A miss is a finished crawl that should have seen the listing.** The sweep only
+considers `succeeded` jobs that have not been swept yet, actually ran, and
+persisted at least `LISTING_SWEEP_MIN_DETAILS` listings. For each of them the
+in-scope listings are those from the same source, still `active`/`stale`,
+matching the job's exact place and — when the job specified them — its
+transaction and property type. Anything there whose `last_seen_at` predates the
+run's `started_at` is charged one miss.
+
+**Misses accumulate; one crawl never decides.** `consecutive_misses` increments
+per sweep and the status walks `active -> stale -> delisted` after 1 and 3
+misses (`LISTING_STALE_AFTER_MISSES`, `LISTING_DELISTED_AFTER_MISSES`). Every
+transition is appended to `ListingStatusEvent` together with the job that caused
+it. A listing seen again resets the counter and is reactivated. `hidden` is a
+local decision and is never overwritten, and a crawl that persisted nothing or
+observed no in-scope listing is skipped rather than read as "everything is
+gone".
+
+**It is safe to run often.** `CrawlJob.swept_at` records that a run has been
+processed and rows are taken with `SELECT ... FOR UPDATE SKIP LOCKED`, so
+re-running the command or running two workers cannot double-count a miss. The
+task is never called from the crawl runner: it is a command,
+`core.listings.tasks.sweep_listings` (hourly by default) and, like every
+periodic entry, only scheduled when the beat process itself is enabled.
+
+## Duplicate candidates
+
+The same flat can be advertised on both sources with different URLs, titles and
+photo sets. M5 records *candidates*; a human decides, and nothing is merged.
+
+```bash
+uv run python manage.py detect_duplicate_candidates --city sari --dry-run
+uv run python manage.py detect_duplicate_candidates
+```
+
+**Detection is pure and conservative.** `core/dedup/matching.py` compares
+fingerprints rather than rows — no database, no network, no clock — so the
+riskiest logic in the project is tested as a plain unit test. A pair must first
+clear the blockers (different sources, same transaction and property when both
+are stated, same city/province when both resolve, neither row hidden or already
+linked) and then collect at least two weighted signals scoring 50/100:
+
+| Signal | Weight | Tolerance |
+| --- | --- | --- |
+| Area | 40 | within `max(3 m², 5%)` |
+| Price | 30 | within 5% of the headline amount (sale price, else deposit, else rent) |
+| Title | 20 | token-set Jaccard ≥ 0.5 after folding digits, letters and Persian stopwords |
+| Published | 10 | within 3 days |
+
+**Review, then link.** Candidates land in the Django admin, where two actions
+confirm which side to keep and one rejects the pair. Confirming sets the
+discarded listing's `Listing.duplicate_of` pointer and nothing else; rejecting a
+previously confirmed candidate clears it. Re-running detection refreshes a
+candidate's score and signals but never overwrites a reviewer's verdict, and
+candidates are never deleted. Both rows always remain: the link says "this is a
+copy of that", not "throw this away".
+
+**It stays bounded.** Listings are bucketed by `(transaction, city)` and only
+the most recently seen `DEDUP_MAX_LISTINGS_PER_BUCKET` rows per bucket are
+compared, so a run stays close to linear in the listings we hold. Only listings
+with a resolved city are compared; one whose place we could not resolve is left
+alone rather than matched against a whole province.
 
 ## Key architectural decisions
 
@@ -384,11 +473,20 @@ environments -- the flag belongs on the beat process.
   `SourceCategory` and is seeded from a data file, mirroring `SourceLocation`.
   A missing mapping is a supported state -- the crawl runs place-wide and the
   job records the limitation -- so no slug is ever guessed in code.
-- **Deduplication is conservative.** Same-source repeats and updates are
-  resolved deterministically from the source's own identifier, never from the
-  URL. Cross-source matches are only ever recorded as candidates for review —
-  listings are never merged automatically, because a false-positive merge is
-  worse than a missed duplicate.
+- **Deduplication is two-layered and conservative.** Same-source repeats and
+  updates are resolved deterministically from the source's own identifier, never
+  from the URL. Cross-source similarity is scored by a *pure* matcher that needs
+  two weighted signals and a 50/100 score before it records anything, and even
+  then only a `pending` candidate for review: the system never merges listings
+  automatically, because a false-positive merge is worse than a missed
+  duplicate. The reviewer's decision is the only thing that sets
+  `duplicate_of`, and it is metadata, not a rewrite.
+- **Lifecycle is evidence-driven, not inference.** A listing ages only because
+  specific finished crawls that should have seen it did not, and each of those
+  runs can charge a listing at most one miss, once. Status is modelled over time
+  (`consecutive_misses` plus an append-only `ListingStatusEvent`) instead of
+  being collapsed into a delete, and a reappearing listing is reactivated rather
+  than left `delisted`.
 - **Money is stored in a single canonical unit (Toman)** with an explicit
   currency and flags for negotiable/unspecified prices; "not specified" is never
   stored as `0`. `price_currency` names the unit of the *stored* amount, so it is

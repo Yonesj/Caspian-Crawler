@@ -95,6 +95,21 @@ class Listing(models.Model):
     first_seen_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(null=True, blank=True)
     last_checked_at = models.DateTimeField(null=True, blank=True)
+    consecutive_misses = models.PositiveSmallIntegerField(
+        default=0,
+        help_text='Sweeps in a row that did not see this listing at the source.',
+    )
+    duplicate_of = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='duplicates',
+        help_text=(
+            'Reviewed duplicate of this listing. Metadata only: neither row is '
+            'merged, rewritten or deleted.'
+        ),
+    )
 
     # Provenance ---------------------------------------------------------------
     raw_data = models.JSONField(
@@ -111,6 +126,10 @@ class Listing(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['source', 'source_id'], name='listing_unique_source_identity'
+            ),
+            models.CheckConstraint(
+                condition=~models.Q(duplicate_of=models.F('id')),
+                name='listing_not_its_own_duplicate',
             ),
             models.CheckConstraint(
                 condition=(

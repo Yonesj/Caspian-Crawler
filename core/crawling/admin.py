@@ -30,7 +30,7 @@ class CrawlJobAdmin(admin.ModelAdmin):
         'pages_fetched', 'stubs_seen', 'details_fetched', 'listings_created',
         'listings_updated', 'listings_skipped', 'listings_out_of_scope', 'errors',
         'report', 'error', 'created_at', 'updated_at', 'queued_at', 'started_at',
-        'finished_at',
+        'finished_at', 'swept_at',
     )
     inlines = (CrawlJobEventInline,)
     actions = ('requeue_jobs',)

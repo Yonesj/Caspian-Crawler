@@ -32,7 +32,10 @@ class ListingAdmin(admin.ModelAdmin):
     list_select_related = ('province', 'city', 'region')
     date_hierarchy = 'first_seen_at'
     autocomplete_fields = ('province', 'city', 'region')
-    readonly_fields = ('first_seen_at', 'last_seen_at', 'created_at', 'updated_at')
+    readonly_fields = (
+        'duplicate_of', 'consecutive_misses', 'first_seen_at', 'last_seen_at',
+        'created_at', 'updated_at',
+    )
     inlines = (ListingImageInline, ListingStatusEventInline)
 
     @admin.display(description='Title')

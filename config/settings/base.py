@@ -147,6 +147,7 @@ LOCAL_APPS = [
     'core.locations',
     'core.listings',
     'core.crawling',
+    'core.dedup',
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -280,10 +281,68 @@ CELERY_TASK_SOFT_TIME_LIMIT = int(env_str('CELERY_TASK_SOFT_TIME_LIMIT', '1500')
 # to decide whether the periodic entry exists at all -- gating inside the task
 # would read the *worker's* environment and silently mismatch the beat process.
 CELERY_BEAT_ENABLED = env_bool('CELERY_BEAT_ENABLED', False)
-CELERY_BEAT_SCHEDULE = {}
-if CELERY_BEAT_ENABLED:
-    CELERY_BEAT_SCHEDULE['dispatch-due-crawl-schedules'] = {
-        'task': 'core.crawling.tasks.dispatch_due_schedules',
-        'schedule': float(env_str('CRAWL_SCHEDULE_TICK_SECONDS', '60')),
+
+
+def build_beat_schedule(
+    *,
+    beat_enabled,
+    tick_seconds,
+    listing_sweep_enabled,
+    listing_sweep_interval,
+    dedup_enabled,
+    dedup_interval,
+):
+    """Periodic entries, gated on the beat opt-in *and* each feature switch.
+
+    Returned as a function (rather than inlined) so the gating is testable
+    without re-importing settings under a different environment.
+    """
+    if not beat_enabled:
+        return {}
+    schedule = {
+        'dispatch-due-crawl-schedules': {
+            'task': 'core.crawling.tasks.dispatch_due_schedules',
+            'schedule': float(tick_seconds),
+        },
     }
+    if listing_sweep_enabled:
+        schedule['sweep-listing-lifecycle'] = {
+            'task': 'core.listings.tasks.sweep_listings',
+            'schedule': float(listing_sweep_interval),
+        }
+    if dedup_enabled:
+        schedule['detect-duplicate-candidates'] = {
+            'task': 'core.dedup.tasks.detect_duplicate_candidates',
+            'schedule': float(dedup_interval),
+        }
+    return schedule
+
+
+# LISTING LIFECYCLE
+# ------------------------------------------------------------------------------
+# A finished crawl that did not see a listing charges it one miss; enough misses
+# in a row move it active -> stale -> delisted.  Nothing is ever deleted, and a
+# listing that reappears is reactivated (see core/listings/lifecycle.py).
+LISTING_STALE_AFTER_MISSES = int(env_str('LISTING_STALE_AFTER_MISSES', '1'))
+LISTING_DELISTED_AFTER_MISSES = int(env_str('LISTING_DELISTED_AFTER_MISSES', '3'))
+LISTING_SWEEP_MIN_DETAILS = int(env_str('LISTING_SWEEP_MIN_DETAILS', '1'))
+LISTING_SWEEP_ENABLED = env_bool('LISTING_SWEEP_ENABLED', True)
+LISTING_SWEEP_INTERVAL_SECONDS = env_str('LISTING_SWEEP_INTERVAL_SECONDS', '3600')
+
+# DEDUPLICATION
+# ------------------------------------------------------------------------------
+# Candidate detection only compares rows we already have, so it is likewise
+# gated by beat rather than running inline in the crawl pipeline.
+DEDUP_CANDIDATES_ENABLED = env_bool('DEDUP_CANDIDATES_ENABLED', True)
+DEDUP_CANDIDATES_INTERVAL_SECONDS = env_str('DEDUP_CANDIDATES_INTERVAL_SECONDS', '86400')
+DEDUP_MAX_LISTINGS_PER_BUCKET = int(env_str('DEDUP_MAX_LISTINGS_PER_BUCKET', '500'))
+
+CELERY_BEAT_SCHEDULE = build_beat_schedule(
+    beat_enabled=CELERY_BEAT_ENABLED,
+    tick_seconds=env_str('CRAWL_SCHEDULE_TICK_SECONDS', '60'),
+    listing_sweep_enabled=LISTING_SWEEP_ENABLED,
+    listing_sweep_interval=LISTING_SWEEP_INTERVAL_SECONDS,
+    dedup_enabled=DEDUP_CANDIDATES_ENABLED,
+    dedup_interval=DEDUP_CANDIDATES_INTERVAL_SECONDS,
+)
 

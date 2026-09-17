@@ -120,6 +120,11 @@ class CrawlJob(CrawlScopeFields):
     queued_at = models.DateTimeField(null=True, blank=True)
     started_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
+    swept_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text='When the listing lifecycle sweep processed this run (idempotency).',
+    )
 
     class Meta:
         ordering = ['-created_at', '-id']

@@ -120,6 +120,10 @@ def _apply_fields(listing, normalized, *, raw, seen_at, created) -> None:
     if normalized.published_at is not None:
         listing.published_at = normalized.published_at
 
+    # The crawl saw it, so the miss streak is broken -- whether it was still
+    # active or is being brought back from stale/delisted.
+    listing.consecutive_misses = 0
+
     if created:
         listing.status = ListingStatus.ACTIVE
     elif listing.status in {ListingStatus.STALE, ListingStatus.DELISTED}:

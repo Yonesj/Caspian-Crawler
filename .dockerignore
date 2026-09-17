@@ -1,0 +1,75 @@
+# -----------------------
+# Virtual envs / Python
+# -----------------------
+.venv/
+venv/
+env/
+ENV/
+
+# -----------------------
+# Secret & env files
+# -----------------------
+.env
+.env.*
+.envs/
+secrets/
+secrets/**
+
+# -----------------------
+# IDE/editor configs
+# -----------------------
+.idea/
+.vscode/
+
+# -----------------------
+# Git
+# -----------------------
+.git
+.gitignore
+
+# -----------------------
+# Python caches / build artifacts
+# -----------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# -----------------------
+# Django / Web Assets
+# -----------------------
+media/
+staticfiles/
+
+# -----------------------
+# Frontend
+# -----------------------
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# -----------------------
+# Tests
+# -----------------------
+tests/
+**/tests/
+test_*.py
+
+# -----------------------
+# OS / miscellaneous
+# -----------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+celerybeat-schedule
+celerybeat.pid
+
+.playwright-browsers

@@ -19,6 +19,16 @@ DATABASES = {
     'default': postgres_config(CONN_MAX_AGE=0),
 }
 
+# CELERY
+# ------------------------------------------------------------------------------
+# Tests must stay offline: tasks run eagerly against an in-memory broker, so the
+# default suite needs neither Redis nor a running worker.  Redis is only required
+# to exercise the real worker/beat path (see README).
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+CELERY_BROKER_URL = 'memory://'
+CELERY_RESULT_BACKEND = 'cache+memory://'
+
 # CACHES
 # ------------------------------------------------------------------------------
 CACHES = {

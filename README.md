@@ -16,7 +16,7 @@ deliberately traded for a sound, well-tested architecture.
 | 1 | Domain data: provinces/cities/regions, listings, status history | done |
 | 2 | Source integrations: Divar + Sheypoor adapters, retry/backoff, rate limits | done |
 | 3 | Normalization: Persian digits, Toman/Rial, Jalali dates, locations | done |
-| 4 | Crawl pipeline: jobs, Celery worker + beat, observability | planned |
+| 4 | Crawl pipeline: jobs, Celery worker + beat, observability | done |
 | 5 | Deduplication and listing lifecycle | planned |
 | 6 | API endpoints, Dockerfile, docker-compose, full README | planned |
 
@@ -41,13 +41,17 @@ cp .env.example .env      # then edit the values
 #    CREATE DATABASE north_estate_db OWNER north_estate_user;
 #    ALTER ROLE north_estate_user CREATEDB;   -- lets pytest-django build its test DB
 
-# 4. Schema, reference locations and an admin account
+# 4. Schema, reference data and an admin account
 uv run python manage.py migrate
-uv run python manage.py seed_locations     # idempotent; safe to re-run
+uv run python manage.py seed_locations           # idempotent; safe to re-run
+uv run python manage.py seed_source_categories   # idempotent; source category slugs
 uv run python manage.py createsuperuser
 
-# 5. Run
+# 5. Run the API
 uv run python manage.py runserver
+
+# 6. Run a worker (in another shell) so crawl jobs start
+uv run celery -A config worker -l info
 ```
 
 Then:
@@ -80,9 +84,12 @@ code runs against any PostgreSQL host.
 | `DATABASE_URL` | Full connection URL; alternative to the `POSTGRES_*` set |
 | `POSTGRES_DB` / `_USER` / `_PASSWORD` / `_HOST` / `_PORT` | Individual connection settings |
 | `POSTGRES_CONN_MAX_AGE` | Persistent connection lifetime in seconds |
-| `REDIS_URL` | Shared Redis: rate-limit buckets now, Celery broker/result backend later |
+| `REDIS_URL` | Shared Redis: rate-limit buckets, Celery broker/result backend and cache |
 | `CRAWL_USER_AGENT` | User agent sent to crawl sources; production should carry a contact |
 | `CRAWL_RATE_LIMIT_BACKEND` | `memory` (default) or `redis` (default in production) |
+| `CELERY_TASK_TIME_LIMIT` / `CELERY_TASK_SOFT_TIME_LIMIT` | Per-crawl hard/soft limit in seconds (default 1800 / 1500) |
+| `CELERY_BEAT_ENABLED` | `true` registers the periodic dispatch entry in Celery beat (default off) |
+| `CRAWL_SCHEDULE_TICK_SECONDS` | How often beat asks for due schedules, in seconds (default 60) |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated origins (production) |
 | `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS` | Opt-in TLS hardening (production) |
 
@@ -121,7 +128,11 @@ layer — retry/backoff and `Retry-After` behaviour, both rate limiters, and bot
 source parsers — and the normalization layer: digit and letter folding, price
 canonicalization, Jalali dates, category and title classification, attribute
 extraction and location resolution, including end-to-end runs over the committed
-fixtures.
+fixtures, and the crawl pipeline: scope resolution, the idempotent
+`(source, source_id)` upsert, partially failed crawls, the Celery task's
+terminal states and redelivery no-op, the beat dispatcher and the operator
+commands. Tasks run eagerly against an in-memory broker in tests, so the
+default suite needs no Redis and no worker.
 
 Parsers and the transport are tested against committed fixtures and a mocked
 HTTP transport, so no default test performs a live request; `-m network` runs
@@ -199,6 +210,7 @@ config/settings/     # split settings: base / development / test / production
 core/accounts/       # project user model and JWT endpoints
 core/locations/      # province/city/region reference data + seed command
 core/listings/       # normalized listing, images, status history
+core/crawling/       # crawl jobs, scope resolution, persistence, Celery tasks
 core/normalization/  # source DTOs -> normalized listings (pure, DB-free)
 core/sources/        # source vocabulary, adapters, HTTP transport, rate limiting
 tests/               # unit, integration and fixture-based parser tests
@@ -285,6 +297,63 @@ retried — see "Fault tolerance and pacing" below.
 - **Testability.** Transport tests inject the clock and RNG, so retry, jitter
   and `Retry-After` behaviour is asserted without sleeping or touching a network.
 
+## Background crawling
+
+Crawling never happens inside a request. An operator registers a
+`CrawlJob`, a worker claims it, and the job exposes its progress and outcome:
+
+```bash
+# register + publish (resolves and snapshots the scope before anything is queued)
+uv run python manage.py create_crawl_job --source divar --city sari     --transaction sale --property apartment --pages 2
+
+# worker + optional beat, in separate shells
+uv run celery -A config worker -l info
+CELERY_BEAT_ENABLED=true uv run celery -A config beat -l info
+
+# development escape hatch: run pending jobs in-process, no worker needed
+uv run python manage.py run_crawl_jobs
+```
+
+**Lifecycle.** `pending -> queued -> running -> succeeded | partially_succeeded
+| failed | cancelled`, with every transition written to an append-only
+`CrawlJobEvent`. A crawl that saved part of its scope before a source failed is
+`partially_succeeded`, not `failed`; one that never reached the source is
+`failed` with the typed error in `CrawlJob.error`. `CrawlJob.report` keeps the
+final counters, the duration, the resolved place/category and a bounded,
+deduplicated list of failures. Progress is also logged on the
+`north_estate.crawl` logger.
+
+**Claiming and idempotency.** `claim_job()` takes the job with
+`SELECT ... FOR UPDATE SKIP LOCKED` and only accepts `pending`/`queued`, so two
+workers can never run the same job and a redelivered `acks_late` message is a
+no-op. Tasks carry a hard time limit so a stuck crawl cannot occupy a worker
+forever. Within a run, one unparseable detail is counted and skipped; a list
+page that exhausts the transport's retry budget stops the crawl.
+
+**Scope is data.** A job stores the place the operator picked; the runner
+resolves the source's own place id from `SourceLocation`, walking from the most
+specific level up (region -> city -> province). The `(transaction, property)`
+selection is resolved to a verified source category slug from `SourceCategory`
+(`seed_source_categories`); when a mapping does not exist the crawl runs
+place-wide and the job records that, rather than guessing a slug. An unmapped
+place or a disabled source fails the job at creation time, before anything is
+queued.
+
+**Re-runs are duplicate-free** because persistence upserts on
+`(source, source_id)` -- the source's own identifier, never the URL. A listing
+seen again has its data refreshed and `last_seen_at` advanced, and one that
+reappears after being `stale`/`delisted` is reactivated with a status event.
+Cross-source duplicate candidates and the staleness sweep belong to the next
+milestone; nothing here deletes a listing.
+
+**Periodic crawls are opt-in twice over.** Beat only has the dispatch entry
+when `CELERY_BEAT_ENABLED=true`, and the dispatcher only acts on
+`CrawlSchedule` rows that are enabled and due. No schedule rows are seeded, so a
+fresh deployment never starts loading third-party sites on its own. The
+dispatcher itself performs no HTTP; it creates jobs and lets workers crawl.
+Note that beat and the worker are separate processes with separate
+environments -- the flag belongs on the beat process.
+
 ## Key architectural decisions
 
 - **HTTP-first crawling with a browser seam.** Both sources expose
@@ -302,9 +371,19 @@ retried — see "Fault tolerance and pacing" below.
   the domain models.
 - **Celery + Redis for background work.** Crawling never happens inside a
   request; jobs have an observable lifecycle and a retry policy, and Redis also
-  backs shared rate-limiting and throttle state across workers.
+  backs shared rate-limiting and throttle state across workers. Redis is the
+  broker and result backend, so a worker needs no service beyond the one the
+  shared rate limiter already uses. Jobs are claimed with
+  `SELECT ... FOR UPDATE SKIP LOCKED`, which is why the suite runs on
+  PostgreSQL.
 - **Celery beat for optional periodic crawls**, driven by database-backed
-  schedules (disabled by default).
+  schedules. Beat is opt-in in its own settings and no schedules are seeded, so
+  a fresh stack never begins crawling third-party sites by itself.
+- **Source categories are reference data, not crawler code.** The slug a search
+  endpoint expects for a `(transaction, property)` pair lives in
+  `SourceCategory` and is seeded from a data file, mirroring `SourceLocation`.
+  A missing mapping is a supported state -- the crawl runs place-wide and the
+  job records the limitation -- so no slug is ever guessed in code.
 - **Deduplication is conservative.** Same-source repeats and updates are
   resolved deterministically from the source's own identifier, never from the
   URL. Cross-source matches are only ever recorded as candidates for review —

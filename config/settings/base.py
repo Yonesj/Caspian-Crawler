@@ -146,6 +146,7 @@ LOCAL_APPS = [
     'core.sources',
     'core.locations',
     'core.listings',
+    'core.crawling',
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -253,7 +254,36 @@ CRAWL_USER_AGENT = env_str(
 )
 CRAWL_POLICIES = build_policies(env_str, env_bool)
 
-# Shared Redis: rate-limit buckets now, Celery broker and cache later.
+# Shared Redis: rate-limit buckets, Celery broker/result backend and cache.
 REDIS_URL = redis_url()
 CRAWL_RATE_LIMIT_BACKEND = env_str("CRAWL_RATE_LIMIT_BACKEND", "memory")
+
+# CELERY
+# ------------------------------------------------------------------------------
+# Redis is both the broker and the result backend, so running a worker needs no
+# service beyond the one the shared rate limiter already uses.  Workers and beat
+# are separate processes (see README); beat is opt-in so bringing the stack up
+# never starts loading third-party sites on its own.
+CELERY_BROKER_URL = redis_url()
+CELERY_RESULT_BACKEND = redis_url()
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TIMEZONE = TIME_ZONE
+# Acknowledge after the work, and fetch one job at a time: crawls are long and
+# must not be starved by a worker hoarding messages it cannot start yet.
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_TIME_LIMIT = int(env_str('CELERY_TASK_TIME_LIMIT', '1800'))
+CELERY_TASK_SOFT_TIME_LIMIT = int(env_str('CELERY_TASK_SOFT_TIME_LIMIT', '1500'))
+# Beat is a separate process with its own environment, so the opt-in switch has
+# to decide whether the periodic entry exists at all -- gating inside the task
+# would read the *worker's* environment and silently mismatch the beat process.
+CELERY_BEAT_ENABLED = env_bool('CELERY_BEAT_ENABLED', False)
+CELERY_BEAT_SCHEDULE = {}
+if CELERY_BEAT_ENABLED:
+    CELERY_BEAT_SCHEDULE['dispatch-due-crawl-schedules'] = {
+        'task': 'core.crawling.tasks.dispatch_due_schedules',
+        'schedule': float(env_str('CRAWL_SCHEDULE_TICK_SECONDS', '60')),
+    }
 

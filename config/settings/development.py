@@ -93,6 +93,11 @@ SPECTACULAR_SETTINGS = {
     "AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "ENUM_NAME_OVERRIDES": {
+        "ListingStatus": "core.listings.enums.ListingStatus",
+        "CrawlJobStatus": "core.crawling.enums.CrawlJobStatus",
+        "CrawlJobEventLevel": "core.crawling.enums.CrawlJobEventLevel",
+    },
 }
 
 # corsheaders

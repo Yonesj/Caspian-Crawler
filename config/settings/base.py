@@ -139,7 +139,6 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "corsheaders",
     "django_filters",
-    "drf_spectacular",
 ]
 LOCAL_APPS = [
     'core.accounts',
@@ -345,4 +344,3 @@ CELERY_BEAT_SCHEDULE = build_beat_schedule(
     dedup_enabled=DEDUP_CANDIDATES_ENABLED,
     dedup_interval=DEDUP_CANDIDATES_INTERVAL_SECONDS,
 )
-

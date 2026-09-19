@@ -16,3 +16,14 @@ def test_openapi_schema_is_generatable():
 
     assert schema['openapi'].startswith('3.')
     assert '/auth/token/' in schema['paths']
+    assert '/api/listings/' in schema['paths']
+    assert '/api/crawl-jobs/' in schema['paths']
+    assert '/api/locations/provinces/' in schema['paths']
+
+    create_job = schema['paths']['/api/crawl-jobs/']['post']
+    assert create_job['requestBody']['content']['application/json']['schema'] == {
+        '$ref': '#/components/schemas/CrawlJobCreate'
+    }
+    assert create_job['responses']['201']['content']['application/json']['schema'] == {
+        '$ref': '#/components/schemas/CrawlJob'
+    }

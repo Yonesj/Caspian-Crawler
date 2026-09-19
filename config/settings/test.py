@@ -52,6 +52,16 @@ if 'drf_spectacular' not in INSTALLED_APPS:
 
 REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'NorthEstate API',
+    'VERSION': '1.0.0',
+    'ENUM_NAME_OVERRIDES': {
+        'ListingStatus': 'core.listings.enums.ListingStatus',
+        'CrawlJobStatus': 'core.crawling.enums.CrawlJobStatus',
+        'CrawlJobEventLevel': 'core.crawling.enums.CrawlJobEventLevel',
+    },
+}
+
 # LOGGING
 # ------------------------------------------------------------------------------
 LOGGING = {

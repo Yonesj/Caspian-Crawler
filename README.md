@@ -18,7 +18,8 @@ deliberately traded for a sound, well-tested architecture.
 | 3 | Normalization: Persian digits, Toman/Rial, Jalali dates, locations | done |
 | 4 | Crawl pipeline: jobs, Celery worker + beat, observability | done |
 | 5 | Deduplication and listing lifecycle | done |
-| 6 | API endpoints, Dockerfile, docker-compose, full README | planned |
+| 6 | API endpoints and complete operator/API documentation | done |
+| 7 | Dockerfile and docker-compose deployment | planned |
 
 ## Requirements
 
@@ -73,6 +74,86 @@ generates the schema in-process instead of requesting those URLs.
 from the environment (`DATABASE_URL` or the `POSTGRES_*` variables) so the same
 code runs against any PostgreSQL host.
 
+## API
+
+Listing and location reads are public. Creating or inspecting crawl jobs
+requires a JWT access token; ordinary users can see only jobs they requested,
+while staff users can see every job. Crawling is always queued for Celery and
+never runs inside the HTTP request.
+
+Obtain a token and pass it with the configured `JWT` prefix:
+
+```bash
+curl -X POST http://127.0.0.1:8000/auth/token/ \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"operator","password":"your-password"}'
+
+curl http://127.0.0.1:8000/api/crawl-jobs/ \
+  -H 'Authorization: JWT <access-token>'
+```
+
+### Selection and listings
+
+| Method and path | Purpose |
+| --- | --- |
+| `GET /api/crawl-options/` | Source, transaction and property-type choices |
+| `GET /api/locations/provinces/` | Active provinces |
+| `GET /api/locations/cities/?province=<id>` | Active cities, optionally under one province |
+| `GET /api/locations/regions/?city=<id>` | Active regions, optionally under one city |
+| `GET /api/listings/` | Paginated normalized listing search |
+| `GET /api/listings/<id>/` | One normalized listing |
+
+Anonymous listing queries are restricted to `active` rows, even if another
+status is requested. Staff users may filter the full lifecycle with `status`.
+The response includes the source identity and URL, normalized classification,
+structured location and Toman price fields, physical attributes, lifecycle
+timestamps and image URLs. It deliberately omits raw source payloads and
+deduplication-review internals.
+
+Exact filters are `source`, `transaction_type`, `property_type`, `province`,
+`city`, `region`, `status` and `is_price_negotiable`. Range filters are
+`min_area`/`max_area`, `min_sale_price`/`max_sale_price`,
+`min_deposit`/`max_deposit` and
+`min_monthly_rent`/`max_monthly_rent`. Use `search` for title/description and
+`ordering` (prefix `-` for descending) with `published_at`, `first_seen_at`,
+`last_seen_at`, `area_sqm`, `sale_price`, `deposit` or `monthly_rent`.
+
+```bash
+curl 'http://127.0.0.1:8000/api/listings/?transaction_type=sale&city=12&min_area=80&search=ساحل&ordering=-published_at&page=1'
+```
+
+### Crawl jobs
+
+Create a job by selecting exactly one hierarchy level. Location IDs come from
+the selection endpoints above; source-specific place and category identifiers
+are resolved and snapshotted by the existing crawl service.
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/crawl-jobs/ \
+  -H 'Authorization: JWT <access-token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "source": "divar",
+    "transaction_type": "sale",
+    "property_type": "apartment",
+    "page_limit": 2,
+    "scope": {"city_id": 12}
+  }'
+
+curl http://127.0.0.1:8000/api/crawl-jobs/42/ \
+  -H 'Authorization: JWT <access-token>'
+```
+
+`scope` accepts exactly one of `province_id`, `city_id` or `region_id`.
+Creation returns `201` after registering and queueing the job; poll the detail
+endpoint for status, counters, report/error, timestamps and its append-only
+event history. Schedules, lifecycle sweeps and duplicate review remain operator
+or Django-admin workflows rather than public mutation endpoints.
+
+Swagger UI, ReDoc and the raw OpenAPI schema remain development-only. Their
+routes are registered only when `DEBUG` is true; production exposes the API but
+none of the documentation endpoints.
+
 ## Environment variables
 
 | Variable | Purpose |
@@ -81,6 +162,7 @@ code runs against any PostgreSQL host.
 | `DJANGO_SETTINGS_MODULE` | Settings module to load |
 | `DJANGO_ADMIN_URL` | Admin path, default `admin/` |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated hostnames (required in production) |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Comma-separated trusted origins when deployed behind a separate HTTPS origin |
 | `DATABASE_URL` | Full connection URL; alternative to the `POSTGRES_*` set |
 | `POSTGRES_DB` / `_USER` / `_PASSWORD` / `_HOST` / `_PORT` | Individual connection settings |
 | `POSTGRES_CONN_MAX_AGE` | Persistent connection lifetime in seconds |
@@ -99,7 +181,9 @@ code runs against any PostgreSQL host.
 | `DEDUP_CANDIDATES_INTERVAL_SECONDS` | How often beat runs detection (default 86400) |
 | `DEDUP_MAX_LISTINGS_PER_BUCKET` | Listings compared per `(transaction, city)` per run (default 500) |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated origins (production) |
-| `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS` | Opt-in TLS hardening (production) |
+| `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS` | Opt-in TLS redirect and HSTS duration (production) |
+| `SECURE_HSTS_INCLUDE_SUBDOMAINS`, `SECURE_HSTS_PRELOAD` | HSTS policy switches (default on; inert while duration is 0) |
+| `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE` | Secure-cookie switches (default on in production) |
 
 Per-source crawling policy is overridable without a deploy, with
 `CRAWL_<SOURCE>_<FIELD>` where source is `DIVAR` or `SHEYPOOR` and field is one
@@ -128,8 +212,12 @@ never depends on remote sites being reachable or unchanged.
 Tests run against PostgreSQL, so the configured role needs `CREATEDB` to let
 pytest-django create `test_<database>`. Without it, only non-database tests run.
 
-Covered so far: authentication endpoints, schema generation, the location
-hierarchy and its integrity constraints, the `seed_locations` command
+Covered so far: authentication endpoints, development schema generation, the
+public location selectors, normalized listing list/detail filtering and
+search, active/staff visibility, authenticated crawl-job creation and
+owner/staff visibility, and an API-driven crawl re-run that updates rather
+than duplicates a listing; plus the location hierarchy and its integrity
+constraints, the `seed_locations` command
 (idempotency, dry-run, malformed input, source-id validation), the listing
 model's identity, price, ordering and status-history rules, the whole crawler
 layer — retry/backoff and `Retry-After` behaviour, both rate limiters, and both
@@ -222,9 +310,9 @@ the crawl pipeline's job) and nothing here touches the network.
 ```text
 config/settings/     # split settings: base / development / test / production
 core/accounts/       # project user model and JWT endpoints
-core/locations/      # province/city/region reference data + seed command
-core/listings/       # normalized listing, images, status history
-core/crawling/       # crawl jobs, scope resolution, persistence, Celery tasks
+core/locations/      # province/city/region data, selectors + seed command
+core/listings/       # normalized listings, filters, read API, status history
+core/crawling/       # crawl jobs, job API, orchestration and Celery tasks
 core/dedup/          # cross-source duplicate candidates, pure matcher, review
 core/normalization/  # source DTOs -> normalized listings (pure, DB-free)
 core/sources/        # source vocabulary, adapters, HTTP transport, rate limiting

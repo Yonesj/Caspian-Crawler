@@ -7,6 +7,9 @@ from django.urls import include, path
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     path('auth/', include('core.accounts.urls')),
+    path('api/locations/', include('core.locations.urls')),
+    path('api/', include('core.listings.urls')),
+    path('api/', include('core.crawling.urls')),
 ]
 
 if settings.DEBUG:

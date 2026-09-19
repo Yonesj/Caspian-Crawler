@@ -19,7 +19,7 @@ deliberately traded for a sound, well-tested architecture.
 | 4 | Crawl pipeline: jobs, Celery worker + beat, observability | done |
 | 5 | Deduplication and listing lifecycle | done |
 | 6 | API endpoints and complete operator/API documentation | done |
-| 7 | Dockerfile and docker-compose deployment | planned |
+| 7 | Local Dockerfile and docker-compose development stack | implemented; verify outside the agent sandbox |
 
 ## Requirements
 
@@ -73,6 +73,50 @@ generates the schema in-process instead of requesting those URLs.
 `production.py` by `wsgi.py`/`asgi.py`. Database connection details always come
 from the environment (`DATABASE_URL` or the `POSTGRES_*` variables) so the same
 code runs against any PostgreSQL host.
+
+## Local Docker Compose
+
+The local Compose stack starts PostgreSQL, Redis, Django and a Celery worker in
+one command. It deliberately uses the Django development server and development
+settings: it is for convenient local development, not production deployment.
+
+```bash
+# 1. Create local configuration. The POSTGRES_HOST and REDIS_URL values in this
+#    file are overridden inside Compose, so their non-container defaults are OK.
+cp .env.example .env
+
+# 2. Build and start the full local stack. The one-shot setup service runs
+#    migrations and idempotently seeds locations and source categories first.
+docker compose --env-file .env -f compose/local/docker-compose.yml up --build
+```
+
+The API is available at `http://127.0.0.1:8000`. Because the stack uses
+development settings, Swagger (`/api/docs/`), ReDoc (`/api/redoc/`) and the
+OpenAPI schema (`/api/schema/`) are available locally; these routes remain
+absent in production by design.
+
+Useful operations:
+
+```bash
+# Start the opt-in periodic scheduler as well.
+docker compose --env-file .env -f compose/local/docker-compose.yml --profile scheduler up --build
+
+# Create an admin account, inspect service output, or apply later migrations.
+docker compose --env-file .env -f compose/local/docker-compose.yml exec backend python manage.py createsuperuser
+docker compose --env-file .env -f compose/local/docker-compose.yml logs -f backend worker
+docker compose --env-file .env -f compose/local/docker-compose.yml exec backend python manage.py migrate
+
+# Stop containers. Adding --volumes also permanently removes local database and Redis data.
+docker compose --env-file .env -f compose/local/docker-compose.yml down
+docker compose --env-file .env -f compose/local/docker-compose.yml down --volumes
+```
+
+`DJANGO_HOST_PORT`, `POSTGRES_HOST_PORT` and `REDIS_HOST_PORT` control the host
+ports and default to `8000`, `5432` and `6379`. Source files are bind-mounted
+for Django reloads. The image installs the Python Playwright package but not
+browser binaries, so the optional browser fallback needs separate local setup.
+Docker is unavailable in this development-agent sandbox; run the startup check
+above from a host with Docker before treating the Compose stack as verified.
 
 ## API
 

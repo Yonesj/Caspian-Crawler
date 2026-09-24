@@ -18,6 +18,8 @@ This is intentionally not a full marketplace. It is an API-first reference
 implementation of a crawler platform whose components can be tested, operated,
 and extended independently.
 
+<br>
+
 ## Highlights
 
 - Source adapters for Divar's JSON API and Sheypoor's server-rendered Next.js data
@@ -30,6 +32,8 @@ and extended independently.
 - Searchable and filterable REST API with JWT authentication for operational endpoints
 - Offline-by-default tests using saved source fixtures and mocked transports
 - One-command local environment with Django, PostgreSQL, Redis, and a Celery worker
+
+<br>
 
 ## Architecture
 
@@ -73,11 +77,14 @@ compose/local/       Local Docker image and Compose stack
 docs/                API request collection and presentation material
 ```
 
+<br>
+
 ## Technology
 
 | Area | Choice |
 | --- | --- |
 | Web/API | Django, Django REST Framework, django-filter |
+| Operations admin | Django Unfold |
 | Database | PostgreSQL |
 | Background work | Celery with Redis broker/result backend |
 | Crawling | HTTPX, Selectolax |
@@ -92,6 +99,8 @@ HTTPX is used through its synchronous client: Celery supplies job-level
 concurrency, while HTTP requests remain deliberately paced. Playwright is
 available as tooling for future sources that genuinely require a browser, but
 neither current adapter uses it and there is no automatic browser fallback.
+
+<br>
 
 ## Quick start with Docker Compose
 
@@ -125,6 +134,13 @@ categories before the application starts.
 The schema and documentation routes exist only while `DEBUG=True`; they are not
 registered by the production URL configuration.
 
+The Django admin is an Unfold-based operations console. Its landing dashboard
+shows listing availability, live and recently unsuccessful crawl jobs, pending
+duplicate reviews, a seven-day crawl outcome trend, and the eight most recent
+jobs. Widgets and navigation entries follow Django model permissions, and the
+header includes Persian/English and light/dark switches. The dashboard is
+read-only: starting or re-running crawls remains an explicit API or admin action.
+
 Useful Compose commands:
 
 ```bash
@@ -148,6 +164,8 @@ docker compose --env-file .env -f compose/local/docker-compose.yml down --volume
 
 The local stack uses Django's development server and is not intended to be
 exposed publicly.
+
+<br>
 
 ## Native development setup
 
@@ -186,6 +204,8 @@ CELERY_BEAT_ENABLED=true uv run celery -A config beat -l info
 
 No crawl schedules are seeded, so a fresh installation does not begin making
 requests to third-party sites on its own.
+
+<br>
 
 ## API overview
 
@@ -254,6 +274,8 @@ matches title and description; `ordering` supports publication/observation
 timestamps, area, and price fields. Anonymous users always see only active
 listings. Staff users can inspect non-active lifecycle states.
 
+<br>
+
 ## Crawling and source integrations
 
 Only publicly accessible data is targeted. CaspianCrawler does not bypass
@@ -283,6 +305,8 @@ means implementing `SourceAdapter`, registering it in `core/sources/registry.py`
 and adding source/location/category reference data; the crawl runner,
 normalization contract, persistence, and API do not need to be rewritten.
 
+<br>
+
 ## Normalization
 
 Adapters preserve source values in DTOs; `core/normalization/` owns semantic
@@ -302,6 +326,8 @@ unit-test.
 The latest raw source payload is retained for diagnostics, but the public API
 exposes only the normalized representation.
 
+<br>
+
 ## Identity and deduplication
 
 CaspianCrawler separates two different problems:
@@ -320,6 +346,8 @@ both listings and their histories remain intact.
 
 This conservative design prefers a visible possible duplicate over a
 false-positive merge that destroys provenance.
+
+<br>
 
 ## Background jobs and failure handling
 
@@ -345,6 +373,8 @@ Celery was chosen because crawling is long-running and must not hold an HTTP
 connection open. Redis already serves as the shared rate-limit store, so using
 it as broker and result backend avoids introducing another service.
 
+<br>
+
 ## Fault tolerance and rate limiting
 
 All adapters share `core/sources/transport.py`, so new integrations inherit the
@@ -362,6 +392,8 @@ same reliability policy:
 Defaults are intentionally conservative: approximately one request every two
 seconds for Divar and every three seconds for Sheypoor. Every policy can be
 overridden through environment variables without changing crawler code.
+
+<br>
 
 ## Listing lifecycle
 
@@ -385,6 +417,8 @@ uv run python manage.py sweep_listings --job-id <job-id>
 
 Lifecycle mutation and duplicate review are intentionally operator/admin
 workflows rather than public write endpoints.
+
+<br>
 
 ## Configuration
 
@@ -419,6 +453,8 @@ Supported settings include request rate, burst size, total/connect timeout,
 attempt count, backoff parameters, maximum `Retry-After`, maximum response
 size, and an enabled switch. Never commit a populated `.env`.
 
+<br>
+
 ## Testing
 
 ```bash
@@ -450,6 +486,8 @@ The tests intentionally do not depend on live source content. Remote sites can
 change or become unavailable, and automated CI should neither become flaky nor
 generate unnecessary traffic.
 
+<br>
+
 ## Production notes
 
 `config/settings/production.py` requires secrets and database configuration
@@ -462,6 +500,8 @@ The Compose stack documented above is specifically for local development. A
 production deployment should supply managed PostgreSQL/Redis or durable
 volumes, a reverse proxy and TLS, secret management, health monitoring, and
 separate web, worker, and optional beat processes.
+
+<br>
 
 ## License
 

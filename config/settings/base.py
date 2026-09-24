@@ -5,6 +5,8 @@ from urllib.parse import unquote, urlparse
 
 from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from rest_framework import __path__ as drf_path
 
 from core.sources.config import build_policies
@@ -128,6 +130,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # APPS
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
+    'unfold',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -243,6 +246,170 @@ SIMPLE_JWT = {
 # ------------------------------------------------------------------------------
 # Normalised so a quoted or slash-less value cannot silently break the route.
 ADMIN_URL = (env_str("DJANGO_ADMIN_URL", "admin/") or "admin/").strip("/") + "/"
+
+UNFOLD = {
+    "SITE_TITLE": _("CaspianCrawler Admin"),
+    "SITE_HEADER": _("CaspianCrawler"),
+    "SITE_SUBHEADER": _("Real-estate crawl operations"),
+    "SITE_SYMBOL": "travel_explore",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": False,
+    "SHOW_LANGUAGES": True,
+    "SHOW_BACK_BUTTON": True,
+    "DASHBOARD_CALLBACK": "config.admin_dashboard.dashboard_callback",
+    "COLORS": {
+        "primary": {
+            "50": "oklch(98.4% 0.014 180.72)",
+            "100": "oklch(95.3% 0.051 180.801)",
+            "200": "oklch(91% 0.096 180.426)",
+            "300": "oklch(85.5% 0.138 181.071)",
+            "400": "oklch(77.7% 0.152 181.912)",
+            "500": "oklch(70.4% 0.14 182.503)",
+            "600": "oklch(60% 0.118 184.704)",
+            "700": "oklch(51.1% 0.096 186.391)",
+            "800": "oklch(43.7% 0.078 188.216)",
+            "900": "oklch(38.6% 0.063 188.416)",
+            "950": "oklch(27.7% 0.046 192.524)",
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+        "navigation": [
+            {
+                "title": _("Operations"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Dashboard"),
+                        "icon": "dashboard",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                ],
+            },
+            {
+                "title": _("Crawling"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Crawl jobs"),
+                        "icon": "travel_explore",
+                        "link": reverse_lazy("admin:crawling_crawljob_changelist"),
+                        "permission": "config.admin_dashboard.can_view_crawl_jobs",
+                    },
+                    {
+                        "title": _("Schedules"),
+                        "icon": "schedule",
+                        "link": reverse_lazy("admin:crawling_crawlschedule_changelist"),
+                        "permission": "config.admin_dashboard.can_view_crawl_schedules",
+                    },
+                    {
+                        "title": _("Job events"),
+                        "icon": "event_note",
+                        "link": reverse_lazy("admin:crawling_crawljobevent_changelist"),
+                        "permission": "config.admin_dashboard.can_view_crawl_events",
+                    },
+                ],
+            },
+            {
+                "title": _("Listings"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Listings"),
+                        "icon": "real_estate_agent",
+                        "link": reverse_lazy("admin:listings_listing_changelist"),
+                        "permission": "config.admin_dashboard.can_view_listings",
+                    },
+                    {
+                        "title": _("Listing images"),
+                        "icon": "image",
+                        "link": reverse_lazy("admin:listings_listingimage_changelist"),
+                        "permission": "config.admin_dashboard.can_view_listing_images",
+                    },
+                    {
+                        "title": _("Status events"),
+                        "icon": "history",
+                        "link": reverse_lazy("admin:listings_listingstatusevent_changelist"),
+                        "permission": "config.admin_dashboard.can_view_listing_events",
+                    },
+                ],
+            },
+            {
+                "title": _("Duplicate review"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Duplicate candidates"),
+                        "icon": "difference",
+                        "link": reverse_lazy("admin:dedup_duplicatecandidate_changelist"),
+                        "permission": "config.admin_dashboard.can_view_duplicate_candidates",
+                    },
+                ],
+            },
+            {
+                "title": _("Reference data"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Provinces"),
+                        "icon": "map",
+                        "link": reverse_lazy("admin:locations_province_changelist"),
+                        "permission": "config.admin_dashboard.can_view_provinces",
+                    },
+                    {
+                        "title": _("Cities"),
+                        "icon": "location_city",
+                        "link": reverse_lazy("admin:locations_city_changelist"),
+                        "permission": "config.admin_dashboard.can_view_cities",
+                    },
+                    {
+                        "title": _("Regions"),
+                        "icon": "pin_drop",
+                        "link": reverse_lazy("admin:locations_region_changelist"),
+                        "permission": "config.admin_dashboard.can_view_regions",
+                    },
+                    {
+                        "title": _("Source locations"),
+                        "icon": "conversion_path",
+                        "link": reverse_lazy("admin:locations_sourcelocation_changelist"),
+                        "permission": "config.admin_dashboard.can_view_source_locations",
+                    },
+                    {
+                        "title": _("Location aliases"),
+                        "icon": "alternate_email",
+                        "link": reverse_lazy("admin:locations_locationalias_changelist"),
+                        "permission": "config.admin_dashboard.can_view_location_aliases",
+                    },
+                    {
+                        "title": _("Source categories"),
+                        "icon": "category",
+                        "link": reverse_lazy("admin:sources_sourcecategory_changelist"),
+                        "permission": "config.admin_dashboard.can_view_source_categories",
+                    },
+                ],
+            },
+            {
+                "title": _("Access control"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Users"),
+                        "icon": "person",
+                        "link": reverse_lazy("admin:accounts_user_changelist"),
+                        "permission": "config.admin_dashboard.can_view_users",
+                    },
+                    {
+                        "title": _("Groups"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                        "permission": "config.admin_dashboard.can_view_groups",
+                    },
+                ],
+            },
+        ],
+    },
+}
 
 # CRAWLING
 # ------------------------------------------------------------------------------

@@ -1,15 +1,16 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin, TabularInline
 
 from .models import Listing, ListingImage, ListingStatusEvent
 
 
-class ListingImageInline(admin.TabularInline):
+class ListingImageInline(TabularInline):
     model = ListingImage
     extra = 0
     fields = ('position', 'url')
 
 
-class ListingStatusEventInline(admin.TabularInline):
+class ListingStatusEventInline(TabularInline):
     model = ListingStatusEvent
     extra = 0
     can_delete = False
@@ -22,7 +23,7 @@ class ListingStatusEventInline(admin.TabularInline):
 
 
 @admin.register(Listing)
-class ListingAdmin(admin.ModelAdmin):
+class ListingAdmin(ModelAdmin):
     list_display = (
         'id', 'title_short', 'source', 'source_id', 'transaction_type',
         'property_type', 'city', 'status', 'last_seen_at',
@@ -44,14 +45,14 @@ class ListingAdmin(admin.ModelAdmin):
 
 
 @admin.register(ListingImage)
-class ListingImageAdmin(admin.ModelAdmin):
+class ListingImageAdmin(ModelAdmin):
     list_display = ('id', 'listing', 'position', 'url')
     search_fields = ('listing__title', 'url')
     list_select_related = ('listing',)
 
 
 @admin.register(ListingStatusEvent)
-class ListingStatusEventAdmin(admin.ModelAdmin):
+class ListingStatusEventAdmin(ModelAdmin):
     list_display = ('id', 'listing', 'from_status', 'to_status', 'reason', 'created_at')
     list_filter = ('to_status',)
     search_fields = ('listing__title', 'reason')

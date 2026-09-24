@@ -1,10 +1,11 @@
 from django.contrib import admin, messages
+from unfold.admin import ModelAdmin, TabularInline
 
 from .enums import CrawlJobStatus
 from .models import CrawlJob, CrawlJobEvent, CrawlSchedule
 
 
-class CrawlJobEventInline(admin.TabularInline):
+class CrawlJobEventInline(TabularInline):
     model = CrawlJobEvent
     extra = 0
     can_delete = False
@@ -17,7 +18,7 @@ class CrawlJobEventInline(admin.TabularInline):
 
 
 @admin.register(CrawlJob)
-class CrawlJobAdmin(admin.ModelAdmin):
+class CrawlJobAdmin(ModelAdmin):
     list_display = (
         'id', 'source', 'scope', 'transaction_type', 'property_type',
         'status', 'listings_created', 'listings_updated', 'errors', 'created_at',
@@ -51,7 +52,7 @@ class CrawlJobAdmin(admin.ModelAdmin):
 
 
 @admin.register(CrawlSchedule)
-class CrawlScheduleAdmin(admin.ModelAdmin):
+class CrawlScheduleAdmin(ModelAdmin):
     list_display = (
         'name', 'source', 'scope', 'transaction_type', 'property_type',
         'interval_minutes', 'is_enabled', 'next_run_at', 'last_run_at',
@@ -66,7 +67,7 @@ class CrawlScheduleAdmin(admin.ModelAdmin):
 
 
 @admin.register(CrawlJobEvent)
-class CrawlJobEventAdmin(admin.ModelAdmin):
+class CrawlJobEventAdmin(ModelAdmin):
     list_display = ('id', 'job', 'from_status', 'to_status', 'level', 'created_at')
     list_filter = ('level', 'to_status')
     search_fields = ('job__id', 'reason', 'message')

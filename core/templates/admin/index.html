@@ -1,0 +1,95 @@
+{% extends "admin/base.html" %}
+
+{% load i18n unfold %}
+
+{% block title %}{% trans "Operations dashboard" %} | {{ site_title }}{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+    {% component "unfold/components/container.html" %}
+        <div class="flex flex-col gap-6">
+            <div>
+                <h1 class="font-semibold text-2xl text-important tracking-tight">
+                    {% trans "Operations overview" %}
+                </h1>
+                {% component "unfold/components/text.html" with class="mt-1 text-subtle" %}
+                    {% trans "Current listing health, crawl execution, and review workload." %}
+                {% endcomponent %}
+            </div>
+
+            {% if dashboard_cards %}
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {% for card in dashboard_cards %}
+                        {% component "unfold/components/card.html" with href=card.href label=card.label %}
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        aria-hidden="true"
+                                        class="material-symbols-outlined text-primary-600 text-xl! dark:text-primary-400"
+                                    >
+                                        {{ card.icon }}
+                                    </span>
+                                    <p class="font-medium text-sm text-subtle">
+                                        {{ card.title }}
+                                    </p>
+                                </div>
+                                <p class="font-semibold text-3xl text-important">
+                                    {{ card.value }}
+                                </p>
+                                <p class="text-sm text-subtle">{{ card.description }}</p>
+                            </div>
+                        {% endcomponent %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if jobs_chart %}
+                {% trans "Crawl outcomes — last 7 days" as chart_title %}
+                {% component "unfold/components/card.html" with title=chart_title %}
+                    {% if jobs_chart.has_data %}
+                        <p class="sr-only" id="crawl-outcome-chart-description">
+                            {% blocktrans trimmed %}
+                                Daily totals for successful, partially successful, and failed
+                                crawl jobs. Exact values are in the table below.
+                            {% endblocktrans %}
+                        </p>
+                        <div
+                            class="h-80"
+                            role="img"
+                            aria-describedby="crawl-outcome-chart-description"
+                        >
+                            {% component "unfold/components/chart/line.html" with class="h-full" data=jobs_chart.data options=jobs_chart.options %}{% endcomponent %}
+                        </div>
+                    {% else %}
+                        <p class="py-8 text-center text-sm text-subtle">
+                            {% trans "No crawl jobs finished during this seven-day period." %}
+                        </p>
+                    {% endif %}
+                    <div class="mt-6">
+                        {% component "unfold/components/table.html" with table=jobs_chart.table %}{% endcomponent %}
+                    </div>
+                {% endcomponent %}
+            {% endif %}
+
+            {% if recent_jobs_table %}
+                {% trans "Most recent crawl jobs" as recent_jobs_title %}
+                {% component "unfold/components/table.html" with title=recent_jobs_title table=recent_jobs_table %}{% endcomponent %}
+            {% endif %}
+
+            {% if not dashboard_has_widgets %}
+                {% trans "No operational widgets are available with your current permissions." as empty_title %}
+                {% component "unfold/components/card.html" with title=empty_title icon="lock" %}
+                    <p class="text-sm text-subtle">
+                        {% blocktrans trimmed %}
+                            Ask an administrator for view permissions to listings, crawl jobs,
+                            or duplicate candidates.
+                        {% endblocktrans %}
+                    </p>
+                {% endcomponent %}
+            {% endif %}
+        </div>
+    {% endcomponent %}
+{% endblock %}

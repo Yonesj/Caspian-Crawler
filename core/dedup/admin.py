@@ -1,10 +1,11 @@
 from django.contrib import admin, messages
+from unfold.admin import ModelAdmin
 
 from .models import DuplicateCandidate
 
 
 @admin.register(DuplicateCandidate)
-class DuplicateCandidateAdmin(admin.ModelAdmin):
+class DuplicateCandidateAdmin(ModelAdmin):
     list_display = (
         'id', 'left_id', 'right_id', 'score', 'signals_display', 'status',
         'canonical', 'reviewed_by', 'reviewed_at',

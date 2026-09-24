@@ -22,7 +22,7 @@ from core.sources.registry import get_adapter
 
 from .persistence import upsert_listing
 
-logger = logging.getLogger('north_estate.crawl')
+logger = logging.getLogger('caspian_crawler.crawl')
 
 MAX_REPORTED_ERRORS = 50
 

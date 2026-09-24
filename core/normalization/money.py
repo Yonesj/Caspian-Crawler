@@ -17,7 +17,7 @@ from core.listings.enums import Currency
 
 from .text import collapse_whitespace, fold_lookup, numbers, strip_invisible
 
-logger = logging.getLogger('north_estate.normalize')
+logger = logging.getLogger('caspian_crawler.normalize')
 
 SALE = 'sale'
 DEPOSIT = 'deposit'

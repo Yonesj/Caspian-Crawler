@@ -29,7 +29,7 @@ from .locations import LocationIndex
 from .money import DEPOSIT, RENT, SALE, PriceValue, field_hint, parse_price
 from .text import clean_display
 
-logger = logging.getLogger('north_estate.normalize')
+logger = logging.getLogger('caspian_crawler.normalize')
 
 DEFAULT_FIELD = {
     TransactionType.SALE: SALE,

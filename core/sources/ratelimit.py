@@ -25,9 +25,9 @@ from django.core.exceptions import ImproperlyConfigured
 
 from .config import SourcePolicy
 
-logger = logging.getLogger('north_estate.crawl')
+logger = logging.getLogger('caspian_crawler.crawl')
 
-KEY_PREFIX = 'north_estate:ratelimit'
+KEY_PREFIX = 'caspian_crawler:ratelimit'
 
 
 class RateLimiter(Protocol):

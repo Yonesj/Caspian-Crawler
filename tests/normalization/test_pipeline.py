@@ -100,7 +100,7 @@ def test_a_negotiable_stub_is_flagged(index):
 def test_an_unlabelled_stub_price_is_left_unplaced(index, caplog):
     stub = next(item for item in divar_stubs() if item.source_id == 'gapqVBMq')
 
-    with caplog.at_level(logging.WARNING, logger='north_estate.normalize'):
+    with caplog.at_level(logging.WARNING, logger='caspian_crawler.normalize'):
         listing = normalize_stub(stub, index=index)
 
     # Nothing in the row says whether this is a total price or a monthly rent,

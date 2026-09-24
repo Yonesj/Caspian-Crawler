@@ -30,12 +30,12 @@ from .errors import (
 )
 from .ratelimit import get_rate_limiter
 
-logger = logging.getLogger('north_estate.crawl')
+logger = logging.getLogger('caspian_crawler.crawl')
 
 # 408/425 are retryable by definition; 429 is handled explicitly (see Retry-After)
 # and every 5xx is treated as transient.
 RETRYABLE_STATUS = frozenset({408, 425, 429})
-DEFAULT_USER_AGENT = 'NorthEstate/0.1 (research crawler)'
+DEFAULT_USER_AGENT = 'CaspianCrawler/0.1 (research crawler)'
 
 
 @dataclass(frozen=True)

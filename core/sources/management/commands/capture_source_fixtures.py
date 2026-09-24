@@ -290,7 +290,7 @@ def sheypoor_document(stream: str) -> str:
     chunk = json.dumps(stream, ensure_ascii=False).replace('</', '<\\/')
     return (
         '<!doctype html>\n<html lang="fa">\n<head><meta charset="utf-8">'
-        '<title>NorthEstate fixture</title></head>\n<body>\n'
+        '<title>CaspianCrawler fixture</title></head>\n<body>\n'
         f'<script>self.__next_f.push([1,{chunk}])</script>\n'
         '</body>\n</html>\n'
     )

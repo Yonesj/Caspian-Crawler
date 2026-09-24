@@ -1,5 +1,5 @@
 [project]
-name = "north-estate"
+name = "caspian-crawler"
 version = "0.1.0"
 description = "Crawling, normalization, deduplication and API backend for northern-Iran real-estate listings"
 readme = "README.md"
@@ -46,8 +46,3 @@ markers = [
     "network: talks to real crawl sources; deselected by default",
     "playwright: requires browser binaries; deselected by default",
 ]
-
-
-#[build-system]
-#requires = ["uv_build>=0.12.13,<0.13.0"]
-#build-backend = "uv_build"

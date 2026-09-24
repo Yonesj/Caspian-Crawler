@@ -1,0 +1,758 @@
+{
+  "info": {
+    "_postman_id": "8fd0f499-2590-4de7-b4b0-90f04586597b",
+    "name": "CaspianCrawler API — HTTPie Desktop",
+    "description": "Import this Postman Collection v2.1 file into HTTPie Desktop or Postman. Start the Django API, PostgreSQL, Redis, and the Celery worker first; the local Compose stack applies migrations and seeds locations and source categories automatically. Create a staff operator with `python manage.py createsuperuser`, then set the username and password collection variables. Run the numbered folders in order where state matters. Obtain a JWT first and, if the client does not run imported Postman test scripts, manually copy response values into the access_token, refresh_token, crawl-job ID, and listing ID variables. The numeric location defaults match a clean import of core/locations/data/locations.json; use the selector requests and update them if an existing database has different primary keys. Listing status is intentionally not writable through the API: the lifecycle sweep performs active → stale → delisted transitions, while authenticated staff requests can inspect those states.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://127.0.0.1:8000", "type": "string"},
+    {"key": "username", "value": "", "type": "string"},
+    {"key": "password", "value": "", "type": "string"},
+    {"key": "access_token", "value": "", "type": "string"},
+    {"key": "refresh_token", "value": "", "type": "string"},
+    {"key": "crawl_job_id", "value": "", "type": "string"},
+    {"key": "rasht_job_id", "value": "", "type": "string"},
+    {"key": "gorgan_job_id", "value": "", "type": "string"},
+    {"key": "sheypoor_job_id", "value": "", "type": "string"},
+    {"key": "rerun_job_id", "value": "", "type": "string"},
+    {"key": "back_to_back_job_1", "value": "", "type": "string"},
+    {"key": "back_to_back_job_2", "value": "", "type": "string"},
+    {"key": "listing_id", "value": "", "type": "string"},
+    {"key": "mazandaran_province_id", "value": "1", "type": "string"},
+    {"key": "gilan_province_id", "value": "2", "type": "string"},
+    {"key": "golestan_province_id", "value": "3", "type": "string"},
+    {"key": "sari_city_id", "value": "1", "type": "string"},
+    {"key": "nowshahr_city_id", "value": "7", "type": "string"},
+    {"key": "rasht_city_id", "value": "14", "type": "string"},
+    {"key": "bandar_anzali_city_id", "value": "15", "type": "string"},
+    {"key": "gorgan_city_id", "value": "24", "type": "string"},
+    {"key": "farhang_shahr_region_id", "value": "1", "type": "string"},
+    {"key": "golsar_region_id", "value": "5", "type": "string"},
+    {"key": "golshahr_region_id", "value": "8", "type": "string"},
+    {"key": "nonexistent_id", "value": "999999999", "type": "string"}
+  ],
+  "item": [
+    {
+      "name": "01 — Authentication and setup",
+      "description": "Create or use a staff user, obtain JWT credentials, and exercise all three authentication endpoints before running protected crawl-job requests.",
+      "item": [
+        {
+          "name": "Obtain access and refresh tokens",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json", "type": "text"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/auth/token/",
+            "description": "Authenticates the configured operator and supplies the access/refresh tokens required by protected workflow steps."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('access_token', body.access);",
+                  "  pm.collectionVariables.set('refresh_token', body.refresh);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify access token",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json", "type": "text"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{access_token}}\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/auth/token/verify/",
+            "description": "Confirms that the stored access token is valid before it is used with the JWT authorization header."
+          }
+        },
+        {
+          "name": "Refresh access token",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json", "type": "text"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/auth/token/refresh/",
+            "description": "Uses the long-lived refresh token to obtain a replacement access token without re-entering credentials."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('access_token', pm.response.json().access);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 — Select source and normalized types",
+      "description": "Discover the supported source, transaction, and property vocabularies instead of hardcoding source-specific labels in a client.",
+      "item": [
+        {
+          "name": "Get crawl options",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/crawl-options/",
+            "description": "Returns the real choices for Divar/Sheypoor, sale/rent/unspecified, and all normalized property types used by job creation."
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 — Select province, city, and region scope",
+      "description": "Read the data-driven location hierarchy used by crawlers and choose exactly one province, city, or region for a crawl job.",
+      "item": [
+        {
+          "name": "List seeded provinces",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/provinces/",
+            "description": "Lists the seeded Mazandaran, Gilan, and Golestan records and their actual database IDs."
+          }
+        },
+        {
+          "name": "List Mazandaran cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/cities/?province={{mazandaran_province_id}}",
+            "description": "Filters cities by the real seeded Mazandaran province and includes Sari, Babol, and Amol for crawl selection."
+          }
+        },
+        {
+          "name": "List Gilan cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/cities/?province={{gilan_province_id}}",
+            "description": "Filters cities by the real seeded Gilan province and includes Rasht and Bandar Anzali for crawl selection."
+          }
+        },
+        {
+          "name": "List Golestan cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/cities/?province={{golestan_province_id}}",
+            "description": "Filters cities by the real seeded Golestan province and includes Gorgan for crawl selection."
+          }
+        },
+        {
+          "name": "List Sari regions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/regions/?city={{sari_city_id}}",
+            "description": "Lists the real Sari regions Farhang Shahr, Tabarestan, and Qaran for the most specific crawl scope."
+          }
+        },
+        {
+          "name": "List Rasht regions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/regions/?city={{rasht_city_id}}",
+            "description": "Lists the seeded Rasht regions Golsar, Moallem, and Manzariyeh for a Gilan region-scoped workflow."
+          }
+        },
+        {
+          "name": "List Gorgan regions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/regions/?city={{gorgan_city_id}}",
+            "description": "Lists the seeded Gorgan regions Golshahr, Nahar Khoran, and Vila Shahr for a Golestan region-scoped workflow."
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 — Create crawl jobs",
+      "description": "Create asynchronous crawl jobs against real seeded scopes; run only the examples you need to avoid unnecessary traffic to public sources.",
+      "item": [
+        {
+          "name": "Create Divar Sari apartment-sale crawl",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"page_limit\": 2,\n  \"scope\": {\n    \"city_id\": {{sari_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Queues a bounded Divar crawl using Sari's seeded source mapping and stores the returned job ID for later polling."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('crawl_job_id', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Divar Rasht apartment-rent crawl",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"rent\",\n  \"property_type\": \"apartment\",\n  \"page_limit\": 2,\n  \"scope\": {\n    \"city_id\": {{rasht_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Queues a Gilan rental crawl for seeded Rasht, falling back to its province source mapping when needed."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('rasht_job_id', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Divar Gorgan apartment-sale crawl",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"page_limit\": 2,\n  \"scope\": {\n    \"city_id\": {{gorgan_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Queues a Golestan sale crawl for seeded Gorgan, falling back to its province source mapping when needed."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('gorgan_job_id', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Sheypoor Nowshahr villa-sale crawl",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"sheypoor\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"villa\",\n  \"page_limit\": 1,\n  \"scope\": {\n    \"city_id\": {{nowshahr_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Exercises the Sheypoor adapter with Nowshahr's seeded source slug; without a category mapping, the job records the requested type and crawls the resolved place scope."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('sheypoor_job_id', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 — Observe crawl-job lifecycle",
+      "description": "List the current user's jobs and poll individual jobs until they reach succeeded, partially_succeeded, failed, or cancelled.",
+      "item": [
+        {
+          "name": "List my crawl jobs",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/crawl-jobs/?page=1",
+            "description": "Shows the authenticated user's paginated jobs without the heavier per-job event history."
+          }
+        },
+        {
+          "name": "Poll primary Sari job",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/crawl-jobs/{{crawl_job_id}}/",
+            "description": "Returns counters, report, errors, timestamps, and event history for the Sari job; repeat until a terminal status appears."
+          }
+        },
+        {
+          "name": "Poll Rasht job",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/crawl-jobs/{{rasht_job_id}}/",
+            "description": "Observes the independently queued Gilan crawl and its partial-failure/event reporting."
+          }
+        },
+        {
+          "name": "Poll Gorgan job",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/crawl-jobs/{{gorgan_job_id}}/",
+            "description": "Observes the independently queued Golestan crawl and its normalized persistence counters."
+          }
+        },
+        {
+          "name": "Poll Sheypoor job",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/crawl-jobs/{{sheypoor_job_id}}/",
+            "description": "Shows that the same observable job lifecycle is shared by crawler sources rather than implemented only for Divar."
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 — Search and filter normalized listings",
+      "description": "Query only the common normalized listing representation; public requests return active listings and never expose raw source payloads.",
+      "item": [
+        {
+          "name": "List active listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?page=1",
+            "description": "Returns the paginated public feed, which is restricted to active normalized listings."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const rows = pm.response.json().results || [];",
+                  "  if (rows.length) pm.collectionVariables.set('listing_id', rows[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Sari Divar apartment sales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?source=divar&transaction_type=sale&property_type=apartment&city={{sari_city_id}}&search=آپارتمان&ordering=-published_at&page=1",
+            "description": "Combines source, normalized type, seeded Sari scope, full-text search, ordering, and pagination."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const rows = pm.response.json().results || [];",
+                  "  if (rows.length) pm.collectionVariables.set('listing_id', rows[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter Sari sales by area and Toman price",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?source=divar&transaction_type=sale&city={{sari_city_id}}&min_area=50&max_area=300&min_sale_price=1000000000&max_sale_price=50000000000&ordering=sale_price&page=1",
+            "description": "Demonstrates numeric range filters over normalized square metres and canonical Toman sale prices."
+          }
+        },
+        {
+          "name": "Filter Rasht rentals by deposit and monthly rent",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?source=divar&transaction_type=rent&property_type=apartment&province={{gilan_province_id}}&city={{rasht_city_id}}&min_deposit=100000000&max_deposit=5000000000&min_monthly_rent=1000000&max_monthly_rent=100000000&ordering=-last_seen_at&page=1",
+            "description": "Exercises deposit and monthly-rent ranges together with seeded Gilan and Rasht IDs."
+          }
+        },
+        {
+          "name": "Filter negotiable Gorgan listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?source=divar&province={{golestan_province_id}}&city={{gorgan_city_id}}&is_price_negotiable=true&ordering=-first_seen_at&page=1",
+            "description": "Shows the explicit negotiable-price flag with seeded Golestan and Gorgan IDs."
+          }
+        },
+        {
+          "name": "Get one listing",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/{{listing_id}}/",
+            "description": "Retrieves the captured active listing with normalized location, prices, timestamps, and image URLs."
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 — Re-run without duplicating listings",
+      "description": "Submit the same source/scope/type again and compare job counters plus stable listing source IDs to demonstrate update rather than duplicate insertion.",
+      "item": [
+        {
+          "name": "Re-run Sari crawl after completion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"page_limit\": 2,\n  \"scope\": {\n    \"city_id\": {{sari_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Creates a new run with the identical Sari selection so persistence reports updates for matching source IDs instead of inserting duplicate rows."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('rerun_job_id', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Poll re-run job",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/crawl-jobs/{{rerun_job_id}}/",
+            "description": "Inspect listings_created versus listings_updated after the repeated crawl and wait for a terminal status."
+          }
+        },
+        {
+          "name": "Re-query Sari listings after re-run",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?source=divar&transaction_type=sale&property_type=apartment&city={{sari_city_id}}&ordering=-last_seen_at&page=1",
+            "description": "Lets the reviewer compare stable source_id values and refreshed last_seen_at timestamps after the re-run."
+          }
+        },
+        {
+          "name": "Back-to-back duplicate submission A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"page_limit\": 1,\n  \"scope\": {\n    \"city_id\": {{sari_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Queues the first of two immediate identical jobs to exercise concurrent idempotent persistence."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('back_to_back_job_1', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Back-to-back duplicate submission B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"page_limit\": 1,\n  \"scope\": {\n    \"city_id\": {{sari_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Immediately queues the second identical job so database identity rules can be observed under overlap."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('back_to_back_job_2', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 — Listing lifecycle and removal status",
+      "description": "The API intentionally exposes no status mutation route; Celery beat or manage.py sweep_listings manages disappearance, and these staff requests inspect the resulting states.",
+      "item": [
+        {
+          "name": "Public stale filter remains hidden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?status=stale&page=1",
+            "description": "Demonstrates that anonymous clients cannot reveal stale inventory even when they explicitly request status=stale."
+          }
+        },
+        {
+          "name": "Staff list stale listings",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/listings/?status=stale&ordering=-last_seen_at&page=1",
+            "description": "Lets a staff operator inspect listings missed by a recent successful crawl."
+          }
+        },
+        {
+          "name": "Staff list delisted listings",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/listings/?status=delisted&ordering=-last_seen_at&page=1",
+            "description": "Lets a staff operator inspect listings considered removed after the configured miss threshold."
+          }
+        },
+        {
+          "name": "Staff list locally hidden listings",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/listings/?status=hidden&ordering=-last_seen_at&page=1",
+            "description": "Shows the fourth lifecycle state to staff while confirming it stays outside the public active-only feed."
+          }
+        },
+        {
+          "name": "Attempt direct listing status mutation (expected 405)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"hidden\"\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/listings/{{listing_id}}/",
+            "description": "Expected 405 demonstrates that ListingViewSet is read-only and lifecycle status cannot be bypassed with an API write."
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 — Validation and error handling",
+      "description": "Exercise representative authentication, validation, lookup, and filter failures without depending on a live third-party source.",
+      "item": [
+        {
+          "name": "Create job without authentication (expected 401)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json", "type": "text"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"scope\": {\n    \"city_id\": {{sari_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Expected 401 proves that long-running work cannot be queued anonymously."
+          }
+        },
+        {
+          "name": "Create job with two scope levels (expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"transaction_type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"scope\": {\n    \"province_id\": {{mazandaran_province_id}},\n    \"city_id\": {{sari_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Expected 400 demonstrates the exactly-one province/city/region scope rule."
+          }
+        },
+        {
+          "name": "Create job with excessive page limit (expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"},
+              {"key": "Content-Type", "value": "application/json", "type": "text"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"divar\",\n  \"page_limit\": 32768,\n  \"scope\": {\n    \"city_id\": {{sari_city_id}}\n  }\n}",
+              "options": {"raw": {"language": "json"}}
+            },
+            "url": "{{base_url}}/api/crawl-jobs/",
+            "description": "Expected 400 demonstrates the serializer's bounded page_limit contract before any job or network work is created."
+          }
+        },
+        {
+          "name": "Get nonexistent crawl job (expected 404)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "JWT {{access_token}}", "type": "text"}],
+            "url": "{{base_url}}/api/crawl-jobs/{{nonexistent_id}}/",
+            "description": "Expected 404 exercises owner-scoped lookup for a crawl-job ID that does not exist."
+          }
+        },
+        {
+          "name": "Use invalid listing property type (expected 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/?property_type=castle",
+            "description": "Expected 400 demonstrates django-filter validation against the normalized property-type enum."
+          }
+        },
+        {
+          "name": "Use nonnumeric city parent filter (expected 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/locations/regions/?city=not-an-id",
+            "description": "Expected 400 demonstrates explicit positive-integer validation on hierarchical selector parameters."
+          }
+        },
+        {
+          "name": "Get nonexistent listing (expected 404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/listings/{{nonexistent_id}}/",
+            "description": "Expected 404 exercises the public active-only listing lookup for an absent primary key."
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 — Development-only API documentation",
+      "description": "These routes exist only when Django DEBUG is true and are deliberately unavailable in production.",
+      "item": [
+        {
+          "name": "Download OpenAPI schema",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Accept", "value": "application/vnd.oai.openapi+json", "type": "text"}],
+            "url": "{{base_url}}/api/schema/?format=json",
+            "description": "Downloads the drf-spectacular schema in development for contract inspection and should return 404 in production."
+          }
+        },
+        {
+          "name": "Open Swagger UI HTML",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Accept", "value": "text/html", "type": "text"}],
+            "url": "{{base_url}}/api/docs/",
+            "description": "Fetches the development-only Swagger UI page and is included to make its DEBUG-only routing visible."
+          }
+        },
+        {
+          "name": "Open ReDoc HTML",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Accept", "value": "text/html", "type": "text"}],
+            "url": "{{base_url}}/api/redoc/",
+            "description": "Fetches the development-only ReDoc page and is included to make its DEBUG-only routing visible."
+          }
+        }
+      ]
+    }
+  ]
+}

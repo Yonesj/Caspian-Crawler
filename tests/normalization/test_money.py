@@ -67,7 +67,7 @@ def test_absent_price_is_missing_but_recognised():
 
 
 def test_nightly_rates_are_not_written_into_monthly_fields(caplog):
-    with caplog.at_level(logging.DEBUG, logger='north_estate.normalize'):
+    with caplog.at_level(logging.DEBUG, logger='caspian_crawler.normalize'):
         value = parse_price('۱,۰۰۰,۰۰۰ تومان / شب')
 
     assert value.is_missing
@@ -75,7 +75,7 @@ def test_nightly_rates_are_not_written_into_monthly_fields(caplog):
 
 
 def test_unreadable_text_is_reported_rather_than_guessed(caplog):
-    with caplog.at_level(logging.WARNING, logger='north_estate.normalize'):
+    with caplog.at_level(logging.WARNING, logger='caspian_crawler.normalize'):
         value = parse_price('به قیمت روز')
 
     assert value.is_missing

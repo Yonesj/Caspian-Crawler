@@ -29,7 +29,7 @@ from .matching import (
 )
 from .models import DuplicateCandidate
 
-logger = logging.getLogger('north_estate.crawl')
+logger = logging.getLogger('caspian_crawler.crawl')
 
 # A reviewer's verdict is data, not a cache: re-detection refreshes the score
 # and the signals but never rewrites these.

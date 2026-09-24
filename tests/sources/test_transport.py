@@ -25,7 +25,7 @@ def build_fetcher(clock, rng, *, limiter=None, jitter_ratio=0.0, **policy_overri
         monotonic=clock.monotonic,
         rng=rng,
         jitter_ratio=jitter_ratio,
-        user_agent='NorthEstate/test',
+        user_agent='CaspianCrawler/test',
     )
 
 
@@ -206,7 +206,7 @@ def test_user_agent_and_custom_headers_are_sent(clock, rng):
         fetcher.fetch(request)
 
     sent = route.calls[0].request
-    assert sent.headers['user-agent'] == 'NorthEstate/test'
+    assert sent.headers['user-agent'] == 'CaspianCrawler/test'
     assert sent.headers['x-test'] == 'yes'
 
 

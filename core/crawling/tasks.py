@@ -23,7 +23,7 @@ from .models import CrawlSchedule, claim_job, create_job, schedule_next_run
 from .runner import run_job
 from .scope import build_scope
 
-logger = logging.getLogger('north_estate.crawl')
+logger = logging.getLogger('caspian_crawler.crawl')
 
 
 @shared_task(bind=True, acks_late=True, name='core.crawling.tasks.run_crawl_job')

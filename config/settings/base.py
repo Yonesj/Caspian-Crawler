@@ -80,8 +80,8 @@ def postgres_config(*, require_env=False, **overrides):
                 )
         config = {
             "ENGINE": env_str("POSTGRES_ENGINE", "django.db.backends.postgresql"),
-            "NAME": raw["NAME"] or "north_estate_db",
-            "USER": raw["USER"] or "north_estate_user",
+            "NAME": raw["NAME"] or "caspian_crawler_db",
+            "USER": raw["USER"] or "caspian_crawler_user",
             "PASSWORD": raw["PASSWORD"] or "",
             "HOST": raw["HOST"] or "localhost",
             "PORT": int(raw["PORT"] or 5432),
@@ -250,7 +250,7 @@ ADMIN_URL = (env_str("DJANGO_ADMIN_URL", "admin/") or "admin/").strip("/") + "/"
 # overridable per source with CRAWL_<SOURCE>_<FIELD> (see core/sources/config.py).
 CRAWL_USER_AGENT = env_str(
     "CRAWL_USER_AGENT",
-    "NorthEstate/0.1 (research crawler; contact the repository owner)",
+    "CaspianCrawler/0.1 (research crawler; contact the repository owner)",
 )
 CRAWL_POLICIES = build_policies(env_str, env_bool)
 

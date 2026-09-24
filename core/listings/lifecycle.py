@@ -32,7 +32,7 @@ from core.crawling.models import CrawlJob
 from core.listings.enums import ListingStatus, PropertyType, TransactionType
 from core.listings.models import Listing, ListingStatusEvent
 
-logger = logging.getLogger('north_estate.crawl')
+logger = logging.getLogger('caspian_crawler.crawl')
 
 # Statuses the sweep is allowed to move.  ``hidden`` is local and ``delisted``
 # is terminal until the listing is seen again.

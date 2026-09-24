@@ -12,6 +12,6 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
 
-app = Celery('north_estate')
+app = Celery('caspian_crawler')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()

@@ -22,7 +22,7 @@ from django.utils import timezone
 from core.listings.enums import ListingStatus
 from core.listings.models import Listing, ListingImage, ListingStatusEvent
 
-logger = logging.getLogger('north_estate.crawl')
+logger = logging.getLogger('caspian_crawler.crawl')
 
 
 @dataclass(frozen=True)

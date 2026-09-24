@@ -27,7 +27,7 @@ def adapter(clock, rng):
             monotonic=clock.monotonic,
             rng=rng,
             jitter_ratio=0.0,
-            user_agent='NorthEstate/test',
+            user_agent='CaspianCrawler/test',
         )
     )
 

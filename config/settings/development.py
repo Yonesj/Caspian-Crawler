@@ -28,7 +28,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "north-estate-dev",
+        "LOCATION": "caspian-crawler-dev",
     }
 }
 
@@ -80,7 +80,7 @@ if 'drf_spectacular' not in INSTALLED_APPS:
 REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "NorthEstate API",
+    "TITLE": "CaspianCrawler API",
     "DESCRIPTION": (
         "Crawling, normalization, deduplication and search API for real-estate "
         "listings in Mazandaran, Gilan and Golestan."

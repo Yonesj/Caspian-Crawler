@@ -17,7 +17,7 @@ from dataclasses import dataclass
 
 from .text import fold_lookup, fragments
 
-logger = logging.getLogger('north_estate.normalize')
+logger = logging.getLogger('caspian_crawler.normalize')
 
 LEVEL_PROVINCE = 'province'
 LEVEL_CITY = 'city'

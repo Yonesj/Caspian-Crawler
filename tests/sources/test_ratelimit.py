@@ -52,8 +52,8 @@ def test_redis_bucket_is_shared_between_workers(clock):
 
     assert waited == pytest.approx(1.0)
     assert clock.sleeps == [pytest.approx(1.0)]
-    assert client.hget('north_estate:ratelimit:divar', 'tokens') is not None
-    assert client.ttl('north_estate:ratelimit:divar') > 0
+    assert client.hget('caspian_crawler:ratelimit:divar', 'tokens') is not None
+    assert client.ttl('caspian_crawler:ratelimit:divar') > 0
 
 
 def test_redis_bucket_refills_and_honours_burst(clock):

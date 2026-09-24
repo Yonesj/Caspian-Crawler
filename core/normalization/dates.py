@@ -15,7 +15,7 @@ import jdatetime
 
 from .text import collapse_whitespace, strip_invisible, to_ascii_digits
 
-logger = logging.getLogger('north_estate.normalize')
+logger = logging.getLogger('caspian_crawler.normalize')
 
 TEHRAN = ZoneInfo('Asia/Tehran')
 

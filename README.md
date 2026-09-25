@@ -18,6 +18,9 @@ This is intentionally not a full marketplace. It is an API-first reference
 implementation of a crawler platform whose components can be tested, operated,
 and extended independently.
 
+
+https://github.com/user-attachments/assets/86b4d23f-ae12-4fcc-a736-5608516b1456
+
 <br>
 
 ## Highlights
